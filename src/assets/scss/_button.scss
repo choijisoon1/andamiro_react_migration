@@ -1,0 +1,327 @@
+@use 'tokens' as *;
+
+header > button.back {
+  position: relative;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: $title;
+  mask-image: url("/assets/img/com/ico-prev.svg");
+  -webkit-mask-image: url("/assets/img/com/ico-prev.svg");
+  mask-repeat: no-repeat;
+  mask-size: 38px auto;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 38px auto;
+  -webkit-mask-position: center;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+  font-size: 0;
+}
+
+button:disabled {
+  background-color: $bg-disabled;
+  color: $text-disabled;
+}
+
+/*---------------------------------------------
+    버튼 베이스
+---------------------------------------------*/
+.btn-content {
+  width: 100%;
+}
+
+.btn-primary {
+  background-color: $primary;
+  color: $white;
+}
+
+.btn-line {
+  background-color: $white;
+  color: $text-default;
+  border: 1px solid $border;
+}
+
+.btn-text {
+  width: 100%;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: $font16;
+  font-weight: $font-l;
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 15px;
+  width: 100%;
+  height: 40px;
+  font-weight:$font-sb;
+  border-radius: $radius-md;
+  background-color: $white;
+  color: $primary;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: $primary;
+    mask-image: url("/assets/img/com/ico-link.svg");
+    -webkit-mask-image: url("/assets/img/com/ico-link.svg");
+    mask-repeat: no-repeat;
+    mask-size: 18px auto;
+    mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 18px auto;
+    -webkit-mask-position: center;
+  }
+}
+
+.btn-sub {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 40px;
+  padding: 0 15px;
+  margin: 0;
+  border: 0;
+  border-radius: $radius-md;
+  background-color: #f0f1f6;
+  color: $text-default;
+  font-size: $font16;
+  font-weight: $font-l;
+  cursor: pointer;
+}
+
+.bvnt-link {
+  width: 100%;
+  height: 40px;
+  padding: 0 15px;
+  margin: 0;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  background-color: $white;
+  color: $text-default;
+  font-size: $font16;
+  font-weight: $font-l;
+  cursor: pointer;
+}
+
+.btn-write {
+    position:fixed;
+    display:inline-flex;
+    align-items: center;
+    justify-content:center;
+    bottom:20px; right:20px;
+    z-index:2;
+    width:60px; height:60px;
+    background:$primary;
+    border-radius:50%;
+
+    button {
+      font-size:0;
+      display:block;
+      width:30px; height:30px;
+      background-color:$white;
+      mask-image: url("/assets/img/com/ico-write.svg");
+      -webkit-mask-image: url("/assets/img/com/ico-write.svg");
+      mask-repeat: no-repeat;
+      mask-size: 25px auto;
+      mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: 25px auto;
+      -webkit-mask-position: center;
+    }
+  }
+
+/*---------------------------------------------
+    CTP 버튼 (하단 고정)
+---------------------------------------------*/
+.btn-ctp {
+  width: 100%;
+  height: 52px;
+  padding:0 15px;
+  border-radius: $radius-md;
+  background-color: $primary;
+  color: $white;
+  font-size: $font18;
+  font-weight: $font-m;
+
+  &--secondary {
+    width: 100%;
+    height: 52px;
+    padding:0 15px;
+    border-radius: $radius-md;
+    background-color: $white;
+    color: $primary;
+    border:1px solid $primary;
+    font-weight: $font-m;
+  }
+}
+
+
+
+main + footer {
+  &.btn-ctp {
+    flex:0 0 92px;
+    padding:12px 20px;
+    height: auto;
+    border-radius: 0;
+  }
+
+  &.button-ctp {
+    .button-content {
+      padding:12px 20px;
+      text-align:center;
+
+      button {
+        flex:1;
+        width: 100%;
+        height: 52px;
+        border-radius: $radius-md;
+        font-size: $font18;
+      }
+    }
+  }
+}
+
+// ── 버튼 두 개 나란히 ──
+.button-content--duo {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  width: 100%;
+
+  .btn-ctp { flex: 1; font-size:$font16; }
+
+  .btn-ctp--secondary {
+    width: auto;
+    min-width:119px;
+    flex: 0 0 auto;
+    font-size:$font16;
+
+    &:disabled {
+      background: $bg-color;
+      color: $text-disabled;
+    }
+  }
+
+}
+
+/*---------------------------------------------
+    소셜 로그인
+---------------------------------------------*/
+.ico-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 24px;
+    background: url("/assets/img/login/ico-google.png") no-repeat center center / contain;
+  }
+}
+
+
+/*---------------------------------------------
+    팝업 버튼
+---------------------------------------------*/
+
+.modal-bottom__footer {
+  .button-content{
+    width:100%;
+
+    .button-group {
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+
+      button {
+        display:flex;
+        gap:10px;
+        flex:1;
+        align-items:center;
+        background:#F8F9FB ;
+        border-radius:$radius-lg-20;
+        width: 100%;
+        padding:16px;
+        font-size:$font16;
+
+
+        .modal-button__icon {
+          display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; background:#ECF3FE; border-radius:$radius-r;
+          &::before {
+            content:""; width:20px; height:20px;
+            Background-color:$primary;
+            -webkit-mask-repeat:no-repeat;
+            -webkit-mask-size:auto 20px;
+            -webkit-mask-position:center;
+            mask-repeat:no-repeat;
+            mask-size:auto 20px;
+            mask-position:center;
+          }
+
+          &--photo::before {
+            -webkit-mask-image:url("/assets/img/com/ico-image.svg");
+            mask-image:url("/assets/img/com/ico-image.svg");
+          }
+
+          &--video::before {
+            -webkit-mask-image:url("/assets/img/com/ico-face.svg");
+            mask-image:url("/assets/img/com/ico-face.svg");
+          }
+
+
+        }
+        em { display:block; margin-bottom:8px;  font-size:$font16; font-weight:$font-sb; text-align:left; }
+      }
+    }
+
+  }
+}
+
+
+/*---------------------------------------------
+    #버튼 체크박스
+---------------------------------------------*/
+.button-check{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  border-radius:$radius-sm-4;
+  background: $bg-color-e6;
+  position: relative;
+}
+
+.button-check.is-selected {
+  border-color: $primary;
+  background: $primary;
+}
+
+.button-check::after {
+  content: "";
+  position: relative;
+  top:-2px;
+  width: 7px;
+  height: 12px;
+  border: solid $white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}

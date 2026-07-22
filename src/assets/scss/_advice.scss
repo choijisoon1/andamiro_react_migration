@@ -1,0 +1,279 @@
+/* 조언 화면 — 모바일 시안 (포춘 배너 · 점수 행 · 컬러 카드 · AI 카드) */
+@use 'tokens' as *;
+
+.advice-page {
+  .importance-content {
+    button.advice-fortune-btn{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      min-height: 52px;
+      padding: 14px 16px 14px 52px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      border-radius: 16px;
+      background: #e8ecee url("/assets/img/advice/ico_fortune.png") no-repeat 16px center / 32px 32px;
+      color: $text-default;
+      font-weight: 400;
+    }
+
+    .text-content {
+      margin-top: 28px;
+      padding-right: 16px;
+      min-height: 110px;
+      background: url("/assets/img/advice/bg_fortune.png") no-repeat right center / 110px;
+      .text-group {
+        h2 { padding-right:100px; font-size:$font20; font-weight:$font-sb;  }
+        .advice-hero__score {
+          .advice-hero__score-num{ font-size:48px; font-weight:$font-eb; color:$title; }
+        }
+      }
+    }
+  }
+}
+
+
+/* -------------------------------------------------------------------------- */
+/* fortune_popup.html 전용 (popup.css의 layerPopup 구조를 덮어씀)                  */
+/* -------------------------------------------------------------------------- */
+
+/* 페이지 기본값 */
+body.fortune-popup-page {
+  margin: 0;
+  min-height: 100%;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Apple SD Gothic Neo",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--title, #191f28);
+  background: var(--white);
+}
+
+/* 풀팝업 레이아웃: 본문은 스크롤, 푸터는 하단 고정 느낌 */
+.fortune-popup-page .layerPopup.full > .pop-area {
+  height: 100%;
+  border-radius: 0;
+}
+
+.fortune-popup-page .layerPopup.full .pop-body {
+  padding: 20px 20px 12px;
+  display: flex;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.fortune-popup-page .layerPopup.full .pop-content {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fortune-popup-page .layerPopup.full .pop-footer {
+  margin-top: auto;
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, #fff 75%, rgba(255, 255, 255, 0));
+}
+
+/* 인트로 영역 */
+.fortune-popup-page .fortune-intro {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.fortune-popup-page .fortune-intro__inner {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fortune-popup-page .title-tiles {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 8px 0 16px;
+}
+
+.fortune-popup-page .title-tile {
+  width: 42px;
+  height: 50px;
+  border-radius: 9px;
+  background: #1a2b4a;
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.15);
+}
+
+.fortune-popup-page .title-tile::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-0.5px);
+}
+
+.fortune-popup-page .fortune-subtitle {
+  margin: 0 0 24px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-sub, #4e5968);
+  text-align: center;
+  max-width: 22rem;
+}
+
+.fortune-popup-page .fortune-subtitle strong {
+  color: #2b7fff;
+  font-weight: 700;
+}
+
+/* 쿠키/결과 카드 영역 */
+.fortune-popup-page .fortune-cookie-block {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fortune-popup-page .fortune-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 220, 140, 0.65) 0%, rgba(255, 200, 100, 0.25) 45%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.fortune-popup-page .cookie-container {
+  position: relative;
+  z-index: 1;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fortune-popup-page .cookie-img {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+  transition:
+    transform 0.2s ease,
+    opacity 0.3s ease;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+/* 결과 문구는 쿠키 이미지 자리에서 노출 */
+.fortune-popup-page .cookie-container .fortune-text {
+  margin: 0;
+  width: min(240px, 100%);
+  min-height: 180px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background-color: #faf9f6;
+  /*background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.018) 3px, rgba(0, 0, 0, 0.018) 4px);*/
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--font18);
+  font-weight: 500;
+  color: var(--title);
+  word-break: keep-all;
+}
+
+.fortune-popup-page .cookie-container .fortune-text[hidden] {
+  display: none !important;
+}
+
+/* 결과 노출 시 안내 문구만 전환(스크립트가 텍스트 교체); 카드는 유지해 레이아웃 안정 */
+.fortune-popup-page.fortune-result-open .fortune-info-card {
+  position: static;
+  margin-top: 8px;
+  pointer-events: none;
+}
+
+/* 애니메이션 */
+@keyframes fortune-shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.fortune-popup-page .shaking {
+  animation: fortune-shake 0.15s infinite;
+}
+
+.fortune-popup-page .fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 안내 카드 */
+.fortune-popup-page .fortune-info-card {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px 18px;
+  font-size: var(--font16);
+  color: var(--text-sub);
+  text-align: center;
+}
+
+.fortune-popup-page .fortune-cta-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+  padding: 0 20px 28px;
+}
+
+body.fortune-popup-page .layerPopup iframe {
+  width: 100%;
+  height: 100%;
+}

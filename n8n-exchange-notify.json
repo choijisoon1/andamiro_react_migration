@@ -1,0 +1,117 @@
+{
+  "name": "Exchange Notify",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "73b3e999-640d-4f08-aec9-079227a79120",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "73b3e999-640d-4f08-aec9-079227a79120"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://tkqvilgrwjyzgkwhohkn.supabase.co/rest/v1/exchange_members?select=user_id&post_id=eq.{{ $json.body.record.post_id }}&user_id=neq.{{ $json.body.record.user_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcXZpbGdyd2p5emdrd2hvaGtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA0MjYwMSwiZXhwIjoyMDkzNjE4NjAxfQ.HZjoR9Nv-e1EwEZTI6YfXqdXpNVdbTaBeptPc0jmd-c"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcXZpbGdyd2p5emdrd2hvaGtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA0MjYwMSwiZXhwIjoyMDkzNjE4NjAxfQ.HZjoR9Nv-e1EwEZTI6YfXqdXpNVdbTaBeptPc0jmd-c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-get-members",
+      "name": "Get Members",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://tkqvilgrwjyzgkwhohkn.supabase.co/rest/v1/push_subscriptions?user_id=eq.{{ $json.user_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcXZpbGdyd2p5emdrd2hvaGtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA0MjYwMSwiZXhwIjoyMDkzNjE4NjAxfQ.HZjoR9Nv-e1EwEZTI6YfXqdXpNVdbTaBeptPc0jmd-c"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcXZpbGdyd2p5emdrd2hvaGtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA0MjYwMSwiZXhwIjoyMDkzNjE4NjAxfQ.HZjoR9Nv-e1EwEZTI6YfXqdXpNVdbTaBeptPc0jmd-c"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-get-subscription",
+      "name": "Get Subscriptions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://tkqvilgrwjyzgkwhohkn.supabase.co/functions/v1/send-push-notification",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRrcXZpbGdyd2p5emdrd2hvaGtuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODA0MjYwMSwiZXhwIjoyMDkzNjE4NjAxfQ.HZjoR9Nv-e1EwEZTI6YfXqdXpNVdbTaBeptPc0jmd-c"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscription\": {\n    \"endpoint\": \"{{ $json.endpoint }}\",\n    \"keys\": {\n      \"p256dh\": \"{{ $json.p256dh }}\",\n      \"auth\": \"{{ $json.auth }}\"\n    }\n  },\n  \"title\": \"Andamiro\",\n  \"body\": \"New comment!\",\n  \"url\": \"/exchange\"\n}",
+        "options": {}
+      },
+      "id": "node-send-push",
+      "name": "Send Push",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Get Members", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Members": {
+      "main": [
+        [{ "node": "Get Subscriptions", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Subscriptions": {
+      "main": [
+        [{ "node": "Send Push", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,0 +1,37 @@
+@use 'tokens' as *;
+
+// ===== Reset =====
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: $font14;
+  font-weight: $font-l;
+  color: $text-default;
+  background: $white;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 { margin: 0; }
+ul, ol, li { list-style: none; }
+a { text-decoration: none; color: inherit; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; font-size: inherit; }
+input, textarea, select { font-family: inherit; outline: none; border: none; }
+img { display: block; max-width: 100%; }
+
+#app {
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}

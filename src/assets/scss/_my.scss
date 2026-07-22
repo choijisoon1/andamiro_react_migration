@@ -1,0 +1,320 @@
+@use 'tokens' as *;
+
+.my                         { background: linear-gradient(180deg, #3D78F3 0%, #77A1F9 50%, #FFF 100%); }
+.my #headerWrap             { background: transparent; }
+.my #headerWrap h1 span     { display: inline-flex; align-items: center; color:$white; }
+.my #headerWrap header button.header__back span { background:$white; }
+
+/* ── 본문 ── */
+.my-page {
+  flex: 1;
+}
+
+.my-body {
+  padding: 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  height:100%;
+  flex:1;
+}
+
+/* ── 히어로 ── */
+.my-hero {
+  padding:0 24px 44px;
+  background:url("/assets/img/main/bg.png") no-repeat right -130px  bottom -20px / 100% auto;
+
+  .text-content {
+    padding: 0 4px;
+  }
+
+  .tit {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: $font-b;
+
+    span { color:$white; }
+
+    em {
+      color:$white;
+    }
+  }
+}
+
+/* ── 카드 공통 ── */
+.card-content {
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .card-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border:1px solid $border-list;
+
+
+    &.my-profile {
+
+      flex-direction:row;
+      margin-top:-66px;
+      border:0;
+
+    }
+  }
+
+  /* ── 하단버튼 ── */
+  .button-content {
+    display:flex;
+    justify-content:center;
+    align-items: center;
+    padding:12px 0;
+
+    button {padding:0 8px;}
+    span { display:inline-block; margin:0 10px; width:1px; height:12px; background:#E0E0E0; }
+
+  }
+}
+
+/* ── 섹션 라벨 ── */
+.my-section__label {
+  font-size: $font12;
+  color: $text-disabled;
+  font-weight: $font-m;
+  padding: 0 0 8px 4px;
+}
+
+/* ── 프로필 카드 ── */
+.my-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: $white;
+  border-radius: 16px;
+  padding: 16px;
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color:#F9F9FB;
+    background:url("/assets/img/my/bg-pro.png") no-repeat center / 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*font-size: 0;
+    font-weight: $font-b;*/
+    color: $white;
+    flex-shrink: 0;
+    overflow:hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: inherit;
+    }
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    font-size: $font16;
+    font-weight: $font-sb;
+    color: $title;
+  }
+
+  &__email {
+    font-size: $font12;
+    color: $text-disabled;
+  }
+
+  &__edit {
+    font-size: $font12;
+    color: $primary;
+    font-weight:$font-m;
+    border-radius: 20px;
+    padding: 6px 12px;
+    background: #F4F6FA;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+/* ── 통계 ── */
+.my-stats {
+
+  ul {
+    display:flex;
+
+    li {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 0 8px;
+
+      + li {
+        border-left: 1px solid $border;
+      }
+
+      em {
+        font-size: $font24;
+        font-weight: $font-b;
+        color: $title;
+      }
+
+      span {
+        font-size: $font12;
+        color: $text-sub;
+      }
+    }
+  }
+}
+
+/* ── 리스트 ── */
+.my-list {
+  background: $white;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 0 !important;
+  gap: 0 !important;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    border-top: 1px solid $border-f5;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none;
+    color: $text-default;
+    font-size: $font14;
+
+    &:first-child {
+      border-top: none;
+    }
+
+    &--version {
+      cursor: default;
+    }
+  }
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #F4F6FA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      display: block;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: 100%;
+    }
+
+    &--exchange,
+    &--push {
+      &::before {
+        background-image: url("/assets/img/my/ico-01-01.svg");
+      }
+    }
+
+    &--backup {
+      &::before {
+        background-image: url("/assets/img/my/ico-02-01.svg");
+      }
+    }
+    &--notice {
+      &::before {
+        background-image: url("/assets/img/my/ico-02-02.svg");
+      }
+    }
+    &--help {
+      &::before {
+        background-image: url("/assets/img/my/ico-02-03.svg");
+      }
+    }
+    &--doc {
+      &::before {
+        background-image: url("/assets/img/my/ico-02-04.svg");
+      }
+    }
+
+
+
+
+  }
+
+  &__text {
+    flex: 1;
+    font-size: $font14;
+    color: $text-default;
+  }
+
+  &__arrow {
+    width: 16px;
+    height: 16px;
+    background-color: $text-disabled;
+    mask-image: url('/assets/img/com/ico-next.svg');
+    -webkit-mask-image: url('/assets/img/com/ico-next.svg');
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    mask-position: center;
+  }
+
+  &__version {
+    font-size: $font12;
+    color: $text-sub;
+  }
+}
+
+/* ── 푸시 토글 ── */
+.my-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: $border;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &--on {
+    background: $primary;
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    transition: left 0.2s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+
+    .my-toggle--on & {
+      left: 23px;
+    }
+  }
+}

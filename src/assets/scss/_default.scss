@@ -1,0 +1,171 @@
+@use 'tokens' as *;
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: none;
+  word-break: keep-all;
+  word-wrap: break-word;
+  transition: all 0.2s;
+}
+
+html {
+  font-size: 14px;
+  overflow-y: auto;
+  height: 100% !important;
+}
+
+body {
+  height: 100% !important;
+  font-size: 1rem;
+  font-weight: $font-l;
+  line-height: 1.5;
+  font-family: "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  color: $text-default;
+  -webkit-font-smoothing: antialiased;
+}
+
+body, h1, h2, h3, h4, h5, h6,
+dl, dt, dd,
+ul, ol, li,
+table, caption, th, td,
+form, fieldset, legend,
+address, div, p, span, a {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol, li, dl, dt, dd { list-style: none; }
+
+form, fieldset, legend,
+input, button, textarea, label {
+  color: $text-default;
+}
+
+div, img, form, fieldset, button,
+blockquote, p, hr, select, input {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+}
+
+img    { width: 100%; line-height: 0; font-size: 0; vertical-align: top; }
+table  { width: 100%; border-spacing: 0; border-collapse: collapse; }
+
+legend,
+caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+input, textarea, select, address {
+  font-family: "Pretendard", "Apple SD Gothic Neo", sans-serif;
+}
+
+input, button, select, textarea { font-family: inherit; }
+
+input, textarea, select {
+  display: inline-block;
+  vertical-align: middle;
+  color: $text-default;
+}
+
+address, em { font-style: normal; }
+
+button {
+  background-color: $white;
+  text-align: center;
+  cursor: pointer;
+}
+
+a {
+  display: block;
+  color: $text-default;
+
+  &, &:hover, &:focus, &:active {
+    text-decoration: none;
+    cursor: pointer;
+  }
+}
+
+p { color: $text-default; }
+
+/*---------------------------------------------
+    텍스트 정렬
+---------------------------------------------*/
+.tal { text-align: left !important; }
+.tac { text-align: center !important; }
+.tar { text-align: right !important; }
+
+/*---------------------------------------------
+    보더 유틸
+---------------------------------------------*/
+.bor-l   { border-left: 1px solid $border; }
+.bor-l-0 { border-left: 0 !important; }
+.bor-r   { border-right: 1px solid $border; }
+.bor-r-0 { border-right: 0; }
+.pd-l-0  { padding-left: 0 !important; }
+
+/*---------------------------------------------
+    #인풋 리셋
+---------------------------------------------*/
+input,
+.se-select select {
+  display: block;
+  width: 100%;
+  line-height: initial;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  -o-appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  white-space: nowrap;
+  overflow: hidden;
+  outline: none;
+  cursor: pointer;
+
+  &:disabled { cursor: initial; }
+}
+
+// Firefox
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+// Webkit (Chrome, Safari)
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+// Edge
+input[type="password"]::-ms-reveal { display: none; }
+
+input[type="radio"],
+input[type="checkbox"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+input::-ms-clear,
+input::-ms-reveal { display: none; }
+
+// Chrome autofill 기본 스타일 제거
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:hover {
+  -webkit-box-shadow: 0 0 0 1000px $white inset !important;
+  box-shadow: 0 0 0 1000px $white inset !important;
+}

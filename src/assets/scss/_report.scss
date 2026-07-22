@@ -1,0 +1,232 @@
+@use 'tokens' as *;
+
+
+.wrap:has(.report-main) {
+  background: $bg-primary;
+
+  #headerWrap {
+    background: $bg-primary;
+    header {
+
+      button.header__back {
+        span {
+          background: $white;
+
+        }
+      }
+
+      h1 {
+        color:  $white;
+
+      }
+    }
+  }
+
+}
+
+
+
+
+
+.report-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+
+  > .no-data {
+    position: static;
+    width: 100%;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: $white;
+  }
+}
+
+// ── 히어로 ──
+.report-hero {
+  padding:0;
+  .text-group {
+    * { color: $white !important; }
+  }
+}
+
+
+
+// ── 패널 ──
+.report-panel {
+  background: $white;
+  padding: 20px 24px;
+
+}
+
+.report-divider {
+  height: 8px;
+  background: #f4f6fa;
+  border: none;
+  margin: 0;
+}
+
+// ── 바 차트 ──
+.report-bar-chart { width: 100%; height: 180px; }
+
+.report-empty {
+  text-align: center;
+  color: $text-disabled;
+  font-size: $font14;
+  padding: 32px 0;
+}
+
+// ── 버블 차트 ──
+.report-bubble-wrap {
+  position: relative;
+  width: 100%;
+  height: 340px;
+}
+
+.r-bubble {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  will-change: transform, opacity;
+
+  &--0 {
+    background: #79AAFF;
+    animation: bubble-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--enter-delay) forwards, float-a 4s ease-in-out 1.5s infinite;
+    .r-bubble__name,
+    .r-bubble__count { color: $white; }
+  }
+  &--1 {
+    background: #E6EFFF;
+    animation: bubble-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--enter-delay) forwards, float-b 4.5s ease-in-out 1.7s infinite;
+    .r-bubble__name  { color: #79AAFF; }
+    .r-bubble__count { color: $text-disabled; }
+  }
+  &--2 {
+    background: #F1F6FF;
+    animation: bubble-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--enter-delay) forwards, float-c 3.8s ease-in-out 1.9s infinite;
+    .r-bubble__name  { color: #79AAFF; }
+    .r-bubble__count { color: $text-disabled; }
+  }
+  &--3 {
+    background: #E7EAEE;
+    animation: bubble-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--enter-delay) forwards, float-d 5s ease-in-out 2.1s infinite;
+    .r-bubble__name,
+    .r-bubble__count { color: $text-disabled; }
+  }
+  &--4 {
+    background: #F7F8F9;
+    animation: bubble-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--enter-delay) forwards, float-e 4.2s ease-in-out 2.3s infinite;
+    .r-bubble__name,
+    .r-bubble__count { color: $text-disabled; }
+  }
+}
+
+
+.r-bubble__name {
+  font-size: $font18;
+  font-weight: $font-b;
+  text-align: center;
+}
+
+.r-bubble__count {
+  text-align: center;
+}
+
+// ── 키프레임 ──
+@keyframes bubble-in {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float-a {
+  0%, 100% { transform: translate(0px,   0px); }
+  50%       { transform: translate(4px,  -7px); }
+}
+@keyframes float-b {
+  0%, 100% { transform: translate(0px,  0px); }
+  50%       { transform: translate(-5px, 6px); }
+}
+@keyframes float-c {
+  0%, 100% { transform: translate(0px, 0px); }
+  50%       { transform: translate(3px, 5px); }
+}
+@keyframes float-d {
+  0%, 100% { transform: translate(0px,   0px); }
+  50%       { transform: translate(-4px, -5px); }
+}
+@keyframes float-e {
+  0%, 100% { transform: translate(0px,  0px); }
+  50%       { transform: translate(5px, -4px); }
+}
+
+
+.report-main {
+    // ── 인사이트 ──
+    .card-item {
+
+        h3 {
+          span {
+            background-color:#E9F5FE;
+                // ── 아이콘 ──
+          &.icon01::before {
+            background: $primary;
+            mask-image: url("/assets/img/report/ico-card-item1.svg");
+            -webkit-mask-image: url("/assets/img/report/ico-card-item1.svg");
+            }
+
+          }
+
+        }
+
+        &.report-insight-card {
+           ul {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            li {
+              border: 1px dashed #eee;
+              border-radius: 16px;
+              padding: 16px;
+              color: var(--text-default);
+              position: relative;
+              display: flex;
+              align-items: flex-start;
+              gap: 8px;
+
+              &::before {
+                content: "";
+                display: block;
+                width: 40px;
+                height: 40px;
+                flex: 0 0 40px;
+              }
+
+              &:first-child::before {
+                background: url("/assets/img/report/ico-card-item1-ll1.png") no-repeat center center / 100% 100%;
+              }
+
+              &:nth-child(2)::before {
+                background: url("/assets/img/report/ico-card-item1-ll2.png") no-repeat center center / 100% 100%;
+              }
+
+              &:nth-child(3)::before {
+                background: url("/assets/img/report/ico-card-item1-ll3.png") no-repeat center center / 100% 100%;
+              }
+
+            }
+           }
+        }
+
+    }
+}
+
