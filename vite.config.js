@@ -5,6 +5,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const scssTokensPath = fileURLToPath(
+    new URL('./src/assets/scss/tokens', import.meta.url),
+  ).replaceAll('\\', '/')
 
   return {
   server: {
@@ -46,8 +49,9 @@ export default defineConfig(({ mode }) => {
     preprocessorOptions: {
       scss: {
         additionalData: (content, filepath) => {
-          if (filepath.includes('_tokens.scss')) return content
-          return `@use 'sass:map';\n@use '${fileURLToPath(new URL('./src/assets/scss/tokens', import.meta.url))}' as *;\n${content}`
+          const importsTokens = /@use\s+['"][^'"]*tokens['"]/.test(content)
+          if (filepath.includes('_tokens.scss') || importsTokens) return content
+          return `@use 'sass:map';\n@use '${scssTokensPath}' as *;\n${content}`
         },
       },
     },
