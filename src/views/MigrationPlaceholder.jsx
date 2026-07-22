@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom'
 
+import AppTabBar from '@/components/layout/AppTabBar'
+import PageLayout from '@/components/layout/PageLayout'
+
 const TITLES = {
   '/main': '메인',
   '/chat': '채팅',
@@ -16,14 +19,24 @@ const TITLES = {
   '/my/chat-view': '일기 분석',
 }
 
+const TAB_PATHS = new Set(['/main', '/report', '/advice', '/my'])
+
 function MigrationPlaceholder({ path }) {
   return (
-    <div className="migration-placeholder">
-      <img src="/assets/img/main/logo.svg" alt="안다미로" />
-      <h1>{TITLES[path] ?? '화면'} React 이관 중</h1>
-      <p>React 기본 골격과 Zustand 인증 연결까지 완료된 상태입니다.</p>
-      <Link to="/">시작 화면으로 이동</Link>
-    </div>
+    <PageLayout
+      title={TITLES[path] ?? '안다미로'}
+      backTo="/main"
+      hideBack={TAB_PATHS.has(path)}
+      hideRight
+    >
+      <div className="migration-placeholder">
+        <img src="/assets/img/main/logo.svg" alt="안다미로" />
+        <h1>{TITLES[path] ?? '화면'} React 이관 중</h1>
+        <p>공통 레이아웃과 Zustand 인증 연결까지 완료된 상태입니다.</p>
+        <Link to="/">시작 화면으로 이동</Link>
+      </div>
+      {TAB_PATHS.has(path) && <AppTabBar />}
+    </PageLayout>
   )
 }
 

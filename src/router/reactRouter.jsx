@@ -5,9 +5,11 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import App from '@/App'
 import { useAuthStore } from '@/stores/authStore'
 import MigrationPlaceholder from '@/views/MigrationPlaceholder'
+import JoinStep1View from '@/views/login/JoinStep1View'
+import JoinStep2View from '@/views/login/JoinStep2View'
+import JoinStep3View from '@/views/login/JoinStep3View'
+import JoinStep4View from '@/views/login/JoinStep4View'
 import LoginView from '@/views/login/LoginView'
-
-const JOIN_PATHS = ['/join/1', '/join/2', '/join/3', '/join/4']
 
 function pendingDestination(search) {
   const params = new URLSearchParams(search)
@@ -58,14 +60,14 @@ function ProtectedRoute() {
   return <Outlet />
 }
 
-function JoinRoute({ path }) {
+function JoinRoute() {
   const user = useAuthStore((state) => state.user)
   const isNewUser = useAuthStore((state) => state.isNewUser)
   const location = useLocation()
 
   if (!user) return <Navigate replace to="/login" />
   if (!isNewUser()) return <Navigate replace to={pendingDestination(location.search)} />
-  return <MigrationPlaceholder path={path} />
+  return <Outlet />
 }
 
 const protectedRoutes = [
@@ -90,10 +92,15 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingRoute /> },
       { path: 'login', element: <LoginRoute /> },
-      ...JOIN_PATHS.map((path) => ({
-        path: path.slice(1),
-        element: <JoinRoute path={path} />,
-      })),
+      {
+        element: <JoinRoute />,
+        children: [
+          { path: 'join/1', element: <JoinStep1View /> },
+          { path: 'join/2', element: <JoinStep2View /> },
+          { path: 'join/3', element: <JoinStep3View /> },
+          { path: 'join/4', element: <JoinStep4View /> },
+        ],
+      },
       {
         element: <ProtectedRoute />,
         children: protectedRoutes.map(([path, labelPath]) => ({

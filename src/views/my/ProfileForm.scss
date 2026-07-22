@@ -1,0 +1,23 @@
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.profile-form__input-wrap {
+  position: relative;
+
+  input {
+    padding-right: 58px;
+  }
+
+  .input-count {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    font-size: $font13;
+    color: $text-disabled;
+    transform: translateY(-50%);
+  }
+}

@@ -1,0 +1,13 @@
+#bodyWrap.login.join-complete {
+  main .text-group em strong {
+    color: $primary;
+    font-style: normal;
+  }
+
+  .join-error {
+    margin-bottom: 8px;
+    color: #ff6b6b;
+    font-size: $font13;
+    text-align: center;
+  }
+}

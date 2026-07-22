@@ -1,0 +1,66 @@
+.tabbar {
+  flex: 0 0 auto;
+  background: $white;
+}
+
+.tabbar__inner {
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+}
+
+.tabbar__item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  padding: 6px 8px;
+  font-size: $font12;
+  font-weight: $font-m;
+  color: $text-disabled;
+  border-radius: 10px;
+  transition: color 0.15s;
+}
+
+.tabbar__item.is-active {
+  color: $primary;
+}
+
+.tabbar__icon {
+  display: block;
+  width: 26px;
+  height: 26px;
+  background-color: $text-disabled;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  transition: background-color 0.15s;
+}
+
+.tabbar__item.is-active .tabbar__icon {
+  background-color: $primary;
+}
+
+.tabbar__icon[data-icon='home'] {
+  -webkit-mask-image: url('/assets/img/com/ico-home.png');
+  mask-image: url('/assets/img/com/ico-home.png');
+}
+
+.tabbar__icon[data-icon='report'] {
+  -webkit-mask-image: url('/assets/img/com/ico-report.png');
+  mask-image: url('/assets/img/com/ico-report.png');
+}
+
+.tabbar__icon[data-icon='advice'] {
+  -webkit-mask-image: url('/assets/img/com/ico-advice.svg');
+  mask-image: url('/assets/img/com/ico-advice.svg');
+}
+
+.tabbar__icon[data-icon='my'] {
+  -webkit-mask-image: url('/assets/img/com/ico-my.svg');
+  mask-image: url('/assets/img/com/ico-my.svg');
+}

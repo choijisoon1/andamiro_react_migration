@@ -1,0 +1,22 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group__label {
+  font-size: $font16;
+  font-weight: $font-sb;
+  color: $title;
+}
+
+.form-group__hint {
+  font-size: $font13;
+  font-weight: $font-l;
+  color: $text-disabled;
+}
+
+.form-group__error {
+  font-size: $font13;
+  color: #dc2626;
+}
