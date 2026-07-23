@@ -1,0 +1,188 @@
+// 기존 ChatComposer.vue의 scoped 스타일 수치를 변경하지 않고 React용으로 분리했다.
+.chat-composer {
+  flex: 0 0 auto;
+  padding: 20px 16px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  background: $white;
+  border-top: 1px solid $border-e;
+}
+
+.chat-composer__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-composer__field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  background: #f5f5f8;
+  border-radius: $radius-r;
+  padding: 0 10px 0 14px;
+  gap: 4px;
+
+  &:focus-within {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
+.chat-composer__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  resize: none;
+  overflow-y: auto;
+  font-size: max(16px, $font16);
+  line-height: 1.5;
+  color: $title;
+  font-family: inherit;
+  max-height: 60px;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.chat-composer__attach,
+.chat-composer__send {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0;
+}
+
+.chat-composer__attach {
+  color: $text-sub;
+  transition: color 0.15s;
+}
+
+.chat-composer__mic {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: $text-sub;
+  transition: color 0.15s;
+  font-size: 0;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: $text-disabled;
+    -webkit-mask-image: url("/assets/img/com/ico-mike.svg");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: auto 20px;
+    -webkit-mask-position: center;
+    mask-image: url("/assets/img/com/ico-mike.svg");
+    mask-repeat: no-repeat;
+    mask-size: auto 20px;
+    mask-position: center;
+  }
+
+  &.is-recording {
+    color: #e53935;
+  }
+}
+
+.chat-composer__send {
+  border-radius: 50%;
+  background: $primary;
+  color: $white;
+  transition: background 0.2s;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: $white;
+    -webkit-mask-image: url("/assets/img/com/ico-top.svg");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: auto 14px;
+    -webkit-mask-position: center;
+    mask-image: url("/assets/img/com/ico-top.svg");
+    mask-repeat: no-repeat;
+    mask-size: auto 14px;
+    mask-position: center;
+
+  }
+
+  &:disabled {
+    background: $bg-disabled;
+  }
+}
+
+.chat-voice-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  background: #fff3f3;
+  border-radius: $radius-md;
+  font-size: $font13;
+  color: #e53935;
+}
+
+.chat-voice-banner__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e53935;
+  flex-shrink: 0;
+  animation: pulse-dot 1s infinite;
+}
+
+.chat-voice-banner__text {
+  flex: 1;
+}
+
+.chat-voice-banner__cancel {
+  font-size: $font13;
+  color: $text-sub;
+  text-decoration: underline;
+  flex-shrink: 0;
+}
+
+.chat-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  }
+}

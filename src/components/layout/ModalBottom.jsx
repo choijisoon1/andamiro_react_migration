@@ -13,6 +13,7 @@ function ModalBottom({
   confirmLabel = '확인',
   onClose,
   onConfirm,
+  footer,
   children,
 }) {
   const titleId = useId()
@@ -61,18 +62,22 @@ function ModalBottom({
           {children}
         </div>
         <div className="modal-bottom__footer">
-          {cancelLabel && (
-            <button
-              type="button"
-              className="btn-ctp btn-ctp--secondary"
-              onClick={onClose}
-            >
-              {cancelLabel}
-            </button>
+          {footer ?? (
+            <>
+              {cancelLabel && (
+                <button
+                  type="button"
+                  className="btn-ctp btn-ctp--secondary"
+                  onClick={onClose}
+                >
+                  {cancelLabel}
+                </button>
+              )}
+              <button type="button" className="btn-ctp" onClick={onConfirm}>
+                {confirmLabel}
+              </button>
+            </>
           )}
-          <button type="button" className="btn-ctp" onClick={onConfirm}>
-            {confirmLabel}
-          </button>
         </div>
       </div>
     </div>,
