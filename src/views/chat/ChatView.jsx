@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import EmotionCameraPopup from '@/components/common/EmotionCameraPopup'
 import ModalButton from '@/components/common/ModalButton'
 import ChatComposer from '@/components/layout/ChatComposer'
 import ModalBottom from '@/components/layout/ModalBottom'
@@ -103,6 +104,7 @@ function ChatView() {
   const [isThinking, setIsThinking] = useState(false)
   const [isVoiceOn, setIsVoiceOn] = useState(false)
   const [showAttachModal, setShowAttachModal] = useState(false)
+  const [showEmotionCamera, setShowEmotionCamera] = useState(false)
   const [showUnsavedBackModal, setShowUnsavedBackModal] = useState(false)
   const [aiChips, setAiChips] = useState([])
   const chatThreadRef = useRef(null)
@@ -113,6 +115,7 @@ function ChatView() {
   const voiceAutoSendTimerRef = useRef(null)
   const isVoiceOnRef = useRef(false)
   const isThinkingRef = useRef(false)
+  const cameraCapturesRef = useRef([])
 
   const greetingLine2 = GREETING_LINE2[emotion] ?? GREETING_LINE2.good
   const starterChips = STARTER_CHIPS[emotion] ?? STARTER_CHIPS.good
@@ -166,6 +169,8 @@ function ChatView() {
     } catch {
       // 언마운트 시 이미 종료된 음성 인식 인스턴스는 무시한다.
     }
+    cameraCapturesRef.current.forEach(({ url }) => URL.revokeObjectURL(url))
+    cameraCapturesRef.current = []
   }, [])
 
   async function callAI() {
@@ -293,6 +298,27 @@ function ChatView() {
       await callAI()
     }
     reader.readAsDataURL(file)
+  }
+
+  function handleCameraComplete(result) {
+    setShowEmotionCamera(false)
+    const capturedImage = result.capturedImageDataUrl || result.capturedImageUrl
+
+    if (capturedImage) {
+      // 화면에는 안정적으로 유지되는 data URL을 쓰고 blob URL은 언마운트 때 해제한다.
+      if (result.capturedImageUrl?.startsWith('blob:')) {
+        cameraCapturesRef.current.push({
+          url: result.capturedImageUrl,
+          meta: result.capturedImageMeta,
+        })
+      }
+      addMessage('user', '', capturedImage)
+      setShowIntro(false)
+      scrollToBottom()
+    }
+
+    const percent = Math.round(result.score * 100)
+    handleUserMessage(`표정 분석 결과는 ${result.emotionLabel} ${percent}%예요.`)
   }
 
   function scheduleVoiceAutoSend() {
@@ -551,10 +577,24 @@ function ChatView() {
                   composerRef.current?.openFilePicker()
                 }}
               />
-              {/* 실시간 표정 분석 버튼은 EmotionCameraPopup 이관과 함께 동일 위치에 연결한다. */}
+              <ModalButton
+                title="실시간 표정 분석"
+                description="카메라로 표정을 실시간 분석해요"
+                icon="video"
+                onClick={() => {
+                  setShowAttachModal(false)
+                  setShowEmotionCamera(true)
+                }}
+              />
             </div>
           </div>
         )}
+      />
+
+      <EmotionCameraPopup
+        show={showEmotionCamera}
+        onClose={() => setShowEmotionCamera(false)}
+        onComplete={handleCameraComplete}
       />
     </>
   )

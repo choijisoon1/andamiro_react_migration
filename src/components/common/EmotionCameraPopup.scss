@@ -1,0 +1,240 @@
+.emotion-camera {
+  display:flex;
+  flex:0 0 auto;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #111;
+  color: #fff;
+  position: fixed;
+  z-index: 1000;
+}
+
+.emotion-camera__header {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 56px;
+  padding: 12px 24px 12px 10px;
+  background:transparent;
+}
+
+.emotion-camera__close {
+  position: relative;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: #222;
+  mask-image: url("/assets/img/com/ico-prev.svg");
+  -webkit-mask-image: url("/assets/img/com/ico-prev.svg");
+  mask-repeat: no-repeat;
+  mask-size: auto 17px;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: auto 17px;
+  -webkit-mask-position: center;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+  font-size: 0;
+}
+
+.emotion-camera__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.emotion-camera__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.emotion-camera__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.emotion-camera__status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.emotion-camera__status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.68);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.emotion-camera__status-pill--ai {
+  color: #35D7E8;
+}
+
+.emotion-camera__status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+}
+
+.emotion-camera__status-dot--recording {
+  background: #FF4B4B;
+}
+
+.emotion-camera__status-dot--ai {
+  background: #35D7E8;
+}
+
+.emotion-camera__error,
+.emotion-camera__notice {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  z-index: 3;
+  margin: 0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.emotion-camera__error {
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(220, 38, 38, 0.88);
+}
+
+.emotion-camera__notice {
+  bottom: 16px;
+  background: rgba(17, 17, 17, 0.72);
+}
+
+.emotion-camera__face-box,
+.emotion-camera__guide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(62vw, 260px);
+  aspect-ratio: 3 / 4;
+  border: 2px solid #8be16f;
+  border-radius: 24px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.emotion-camera__face-box {
+  transform: none;
+}
+
+.emotion-camera__panel {
+  position: absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  width:100%;
+  z-index: 2;
+  padding: 18px 20px calc(20px + env(safe-area-inset-bottom));
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.6) 65%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.emotion-camera__bars {
+  display: grid;
+  gap: 5px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.emotion-camera__bars h4 { color:rgba(255, 255, 255, 0.5); font-size:10px; display:block; margin-bottom:10px; }
+
+.emotion-camera__bar {
+  display: grid;
+  grid-template-columns: 52px 1fr 42px;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.emotion-camera__bar-track {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.emotion-camera__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 160ms ease;
+}
+
+.emotion-camera__bar-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.emotion-camera__actions {
+  display: flex;
+  gap: 10px;
+  flex:0 0 94px;
+}
+
+.emotion-camera__button {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.emotion-camera__button--primary {
+  border-color: #8be16f;
+  background: #8be16f;
+  color: #111;
+}
+
+.emotion-camera__button:disabled {
+  opacity: 0.45;
+}
+
+.emotion-camera .btn-ctp--secondary {
+  color:#fff;
+  border:1px solid rgba(255, 255, 255, 0.2);
+  background:rgba(255, 255, 255, 0.15);
+}
