@@ -110,12 +110,113 @@ src/stores/exchange.js
 - `2001c10` 감정 분석 결과, 게이지, Supabase 일기 저장 흐름 이관
 - `4286636` 오늘의 조언, AI 데이터 보강, 빈 화면, 포춘쿠키 이관
 - 리포트의 요일별 에너지 차트, 감정 순위, 패턴 인사이트를 React로 이관
+- 교환일기 API·Query 계층과 목록·탭·로딩·빈 상태를 React로 이관
 
 각 기능은 화면 단위로 린트·빌드 또는 브라우저 확인 후 커밋했다.
 
-## 5. 현재 React 이관 범위
+## 5. 파일별 이관 매핑
 
-라우트 기준 총 20개 동작 지점 중 12개가 React 구현에 연결됐다. 단순 라우트 개수 기준 60%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+이 표는 원본 파일이 React 프로젝트의 어느 파일로 옮겨졌는지 추적하기 위한 기준이다. 하나의 Pinia 파일이 API와 Query 파일로 나뉘거나, 여러 Vue 기능이 하나의 React 셸로 합쳐진 경우도 실제 구조대로 기록한다.
+
+### 5.1 실행 진입점과 라우터
+
+| 기존 경로 | React 경로 | 상태·설명 |
+| --- | --- | --- |
+| `src/main.js` | `src/main.jsx` | React Root, QueryClientProvider, RouterProvider, PWA 등록으로 이관 완료 |
+| `src/App.vue` | `src/App.jsx` | 인증 초기화, Outlet, 푸시 토스트 셸로 이관 완료 |
+| `src/router/index.js` | `src/router/reactRouter.jsx` | React Router와 인증·회원가입 보호 경로로 이관 중 |
+| `src/views/SplashView.vue` | `src/App.jsx`의 `SplashScreen` 및 `reactRouter.jsx`의 `LandingRoute` | 스플래시와 진입 분기 기능을 합쳐서 이관 완료 |
+
+기존 `src/router/index.js`는 미완료 Vue 화면의 원래 경로를 비교하기 위해 남아 있다. 모든 React 경로가 연결된 뒤 제거한다.
+
+### 5.2 Pinia 저장소와 상태관리
+
+| 기존 Pinia 경로 | 이관 경로 | 분류 | 상태 |
+| --- | --- | --- | --- |
+| `src/stores/auth.js` | `src/stores/authStore.js` | Zustand | 인증·사용자·프로필 이관 완료 |
+| `src/stores/join.js` | `src/stores/joinStore.js` | Zustand | 회원가입 입력 상태 이관 완료 |
+| `src/stores/chat.js` | `src/stores/chatStore.js` | Zustand | 감정·채팅·작성 스냅샷 이관 완료 |
+| `src/stores/diary.js` | `src/api/diaryApi.js` + `src/queries/diaryQueries.js` | TanStack Query | 일기 조회·저장·통계 이관 완료 |
+| `src/stores/exchange.js` | `src/api/exchangeApi.js` + `src/queries/exchangeQueries.js` | TanStack Query | 서버 로직 분리 완료, 남은 교환일기 화면에서 계속 검증 |
+| `src/stores/counter.js` | 대상 없음 | 제거 예정 | 예제 저장소로 최종 정리 때 삭제 |
+
+기존 Pinia 파일은 아직 이관하지 않은 Vue 화면과 비교하기 위해 임시로 남아 있다. 최종 실행 구조에서 사용하는 것은 위 표의 Zustand 저장소와 TanStack Query 계층이다.
+
+### 5.3 화면 파일
+
+| 기존 Vue 경로 | React 경로 | 관련 React 스타일 | 상태 |
+| --- | --- | --- | --- |
+| `src/views/login/LoginView.vue` | `src/views/login/LoginView.jsx` | `src/views/login/LoginView.scss` | 완료 |
+| `src/views/login/JoinStep1View.vue` | `src/views/login/JoinStep1View.jsx` | 기존 `src/assets/scss/_login.scss` 재사용 | 완료 |
+| `src/views/login/JoinStep2View.vue` | `src/views/login/JoinStep2View.jsx` | 기존 `src/assets/scss/_login.scss` 재사용 | 완료 |
+| `src/views/login/JoinStep3View.vue` | `src/views/login/JoinStep3View.jsx` | 기존 `src/assets/scss/_login.scss` 재사용 | 완료 |
+| `src/views/login/JoinStep4View.vue` | `src/views/login/JoinStep4View.jsx` | `src/views/login/JoinStep4View.scss` | 완료 |
+| `src/views/main/MainView.vue` | `src/views/main/MainView.jsx` | 기존 `src/assets/scss/_home.scss` 재사용 | 완료 |
+| `src/views/chat/EmotionView.vue` | `src/views/chat/EmotionView.jsx` | 기존 `src/assets/scss/_chat.scss` 재사용 | 완료 |
+| `src/views/chat/ChatView.vue` | `src/views/chat/ChatView.jsx` | 기존 `_chat.scss` 및 `ChatComposer.scss` | 완료 |
+| `src/views/chat/ResultView.vue` | `src/views/chat/ResultView.jsx` | `src/views/chat/ResultView.scss` | 완료 |
+| `src/views/advice/AdviceView.vue` | `src/views/advice/AdviceView.jsx` | `src/views/advice/AdviceView.scss` | 완료 |
+| `src/views/report/ReportView.vue` | `src/views/report/ReportView.jsx` | 기존 `src/assets/scss/_report.scss` 재사용 | 완료 |
+| `src/views/exchange/ExchangeView.vue` | `src/views/exchange/ExchangeView.jsx` | 기존 `_layout.scss`, `_button.scss` 재사용 | 완료 |
+| `src/views/exchange/WriteView.vue` | `src/views/exchange/WriteView.jsx` 예정 | 기존 `_form.scss`, `_layout.scss` 검토 | 다음 작업 |
+| `src/views/exchange/DetailView.vue` | `src/views/exchange/DetailView.jsx` 예정 | 기존 `_layout.scss` 및 scoped 스타일 이관 예정 | 미완료 |
+| `src/views/exchange/JoinView.vue` | `src/views/exchange/JoinView.jsx` 예정 | Vue scoped 스타일 이관 예정 | 미완료 |
+| `src/views/exchange/RoomView.vue` | 요구사항 확인 후 `RoomView.jsx` 또는 제거 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
+| `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` 예정 | 기존 `src/assets/scss/_my.scss` 검토 | 미완료 |
+| `src/views/my/ProfileView.vue` | `src/views/my/ProfileView.jsx` 예정 | 기존 `ProfileForm.scss` 재사용 검토 | 미완료 |
+| `src/views/my/DataBack.vue` | `src/views/my/DataBack.jsx` 예정 | 기존 `_layout.scss`, `_my.scss` 검토 | 미완료 |
+| `src/views/my/ChatViewView.vue` | `src/views/my/ChatViewView.jsx` 예정 | 기존 `_my.scss` 및 Gauge 스타일 검토 | 미완료 |
+| `src/views/my/ChatListView.vue` | 대상 확인 후 제거 또는 React 작성 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
+
+### 5.4 공통 컴포넌트
+
+| 기존 Vue 경로·기능 | React 경로 | 상태 |
+| --- | --- | --- |
+| `src/components/common/FormGroup.vue` | `src/components/common/FormGroup.jsx` + `FormGroup.scss` | 완료 |
+| `src/components/common/ModalButton.vue` | `src/components/common/ModalButton.jsx` | 완료 |
+| `src/components/common/EmotionCameraPopup.vue` | `src/components/common/EmotionCameraPopup.jsx` + `EmotionCameraPopup.scss` | 완료 |
+| `src/components/common/ResultSkeleton.vue` | `src/components/common/ResultSkeleton.jsx` + `ResultSkeleton.scss` | 완료 |
+| `src/components/common/SvgGauge.vue` | `src/components/common/SvgGauge.jsx` + `SvgGauge.scss` | 완료 |
+| `src/components/common/NoData.vue` | `src/components/common/NoData.jsx` + `NoData.scss` | 완료 |
+| `src/components/common/LoadingSkeleton.vue` | `src/components/common/LoadingSkeleton.jsx` + `LoadingSkeleton.scss` | 완료 |
+| `src/components/layout/PageLayout.vue` | `src/components/layout/PageLayout.jsx` | 완료 |
+| `src/components/layout/AppTabBar.vue` | `src/components/layout/AppTabBar.jsx` + `AppTabBar.scss` | 완료 |
+| `src/components/layout/FooterCtp.vue` | `src/components/layout/FooterCtp.jsx` | 완료 |
+| `src/components/layout/FooterText.vue` | `src/components/layout/FooterText.jsx` | 완료 |
+| `src/components/layout/ChatComposer.vue` | `src/components/layout/ChatComposer.jsx` + `ChatComposer.scss` | 완료 |
+| `src/components/layout/modalBottom.vue` | `src/components/layout/ModalBottom.jsx` + `ModalBottom.scss` | 완료 |
+| `src/components/layout/modalFull.vue` | `src/components/layout/ModalFull.jsx` + `ModalFull.scss` | 완료 |
+| `src/components/layout/TabMenu.vue` | `src/components/layout/TabMenu.jsx` + `TabMenu.scss` | 완료 |
+| `src/views/my/ProfileForm.vue` | `src/views/my/ProfileForm.jsx` + `ProfileForm.scss` | 완료, 프로필 화면에서 재사용 예정 |
+| `vue-echarts`의 `VChart` 사용 부분 | `src/components/common/EChart.jsx` | Bar Chart 완료, Gauge 지원은 추후 추가 |
+| `src/components/layout/FooterDouble.vue` | React 파일 예정 | 실제 사용 화면 이관 시 처리 |
+| `src/components/layout/AppLayout.vue` | 대상 확인 후 제거 또는 React 작성 | 현재 실제 라우트에서 사용하지 않음 |
+| `src/components/HelloWorld.vue` | 대상 없음 | 예제 파일로 최종 삭제 예정 |
+
+### 5.5 변환하지 않고 유지하는 파일
+
+다음 파일은 Vue 컴포넌트가 아니거나 프레임워크 의존성이 없어 React에서도 그대로 사용한다.
+
+| 유지 경로 | 역할 |
+| --- | --- |
+| `src/lib/supabase.js` | Supabase Client |
+| `src/composables/useAdviceEnricher.js` | AI 조언 보강 요청 |
+| `src/composables/useAnalysisAgent.js` | 감정 분석 요청 |
+| `src/composables/useChatAgent.js` | AI 채팅 요청 |
+| `src/composables/useChatN8n.js` | 비활성 n8n 채팅 경로 |
+| `src/composables/usePushSubscription.js` | 푸시 구독 로직, 마이페이지에서 연결 예정 |
+| `src/sw.js` | Service Worker |
+| `api/chat.js` | Vercel 서버리스 AI Proxy |
+| `supabase/functions/**` | Supabase Edge Functions |
+| `supabase/migrations/**` | 데이터베이스 마이그레이션 |
+| `public/assets/**` | 기존 이미지·아이콘·영상 |
+| `src/assets/scss/**` | 기존 공통 스타일, 화면 비교 후 최종 정리 |
+
+앞으로 파일을 이관할 때 이 매핑표의 예정 경로를 실제 경로로 바꾸고 상태를 `완료`로 갱신한다.
+
+## 6. 현재 React 이관 범위
+
+라우트 기준 총 20개 동작 지점 중 13개가 React 구현에 연결됐다. 단순 라우트 개수 기준 65%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -128,7 +229,7 @@ src/stores/exchange.js
 | `/chat/result` | 분석 결과·일기 저장 | React 완료 |
 | `/advice` | 맞춤 조언·포춘쿠키 | React 완료 |
 | `/report` | 감정 리포트 | React 완료 |
-| `/exchange` | 교환일기 목록 | 임시 화면 |
+| `/exchange` | 교환일기 목록 | React 완료 |
 | `/exchange/write` | 교환일기 작성 | 임시 화면 |
 | `/exchange/view/:id` | 교환일기 상세·댓글 | 임시 화면 |
 | `/exchange/join` | 초대 참여 | 임시 화면 |
@@ -161,11 +262,11 @@ React 이관 후에도 유지되는 기반:
 - face-api 모델과 카메라 분석
 - public 이미지와 기존 global SCSS
 
-## 6. 남은 작업 상세
+## 7. 교환일기 진행 및 남은 작업
 
-### 교환일기 데이터 계층
+### 교환일기 데이터 계층 (완료)
 
-현재 `src/stores/exchange.js`에는 목록, 작성, 초대, 참여, 댓글, 삭제, 푸시 요청이 섞여 있다. 이를 다음처럼 분리한다.
+기존 `src/stores/exchange.js`에 섞여 있던 목록, 작성, 초대, 참여, 댓글, 삭제, 푸시 요청을 다음처럼 분리했다.
 
 ```text
 src/api/exchangeApi.js
@@ -185,9 +286,9 @@ src/queries/exchangeQueries.js
 
 ### 교환일기 화면
 
-권장 이관 순서:
+이관 순서:
 
-1. `/exchange` 목록·탭·로딩·빈 상태
+1. `/exchange` 목록·탭·로딩·빈 상태 — 완료
 2. `/exchange/write` 작성·이미지 업로드·AI 결과 전달
 3. `/exchange/view/:id` 상세·초대·댓글·삭제
 4. `/exchange/join` 초대 미리보기·비밀번호·참여
@@ -226,14 +327,12 @@ src/views/my/ChatViewView.vue
 
 실제 사용하는 화면을 옮길 때 함께 React로 변환한다.
 
-- `LoadingSkeleton.vue`
-- `TabMenu.vue`
 - `FooterDouble.vue`
-- 리포트·일기 상세용 ECharts 래퍼
+- 일기 상세용 ECharts Gauge 지원
 
 `HelloWorld.vue`, `counter.js`, `ChatListView.vue`, `RoomView.vue`처럼 예제이거나 내용이 거의 없는 파일은 마지막에 사용 여부와 요구사항을 확인하고 정리한다.
 
-## 7. 완료까지의 권장 순서
+## 8. 완료까지의 권장 순서
 
 ### 단계 A — 리포트 완성 (완료)
 
@@ -245,7 +344,7 @@ src/views/my/ChatViewView.vue
 
 완료 조건은 기존 그래프 값과 순위 계산이 같고, SCSS와 이미지 크기가 유지되며, 월별 데이터가 Query 캐시와 연결되는 것이다.
 
-### 단계 B — 교환일기 기반과 목록
+### 단계 B — 교환일기 기반과 목록 (완료)
 
 1. `exchange.js`의 Supabase 호출을 API와 Query Hook으로 분리
 2. `LoadingSkeleton`, `TabMenu` React 이관
@@ -309,7 +408,7 @@ eslint-plugin-vue
 - Vercel 환경변수와 `/api/chat`
 - Supabase RLS와 Edge Function 권한
 
-## 8. 스타일과 코드 작성 규칙
+## 9. 스타일과 코드 작성 규칙
 
 1. 기존 global SCSS는 가능한 그대로 재사용한다.
 2. Vue의 `<style scoped>`는 같은 React 컴포넌트 옆 `.scss` 파일로 옮긴다.
@@ -335,7 +434,7 @@ eslint-plugin-vue
 정리: Vue와 Pinia 의존성을 제거
 ```
 
-## 9. 현재 검증 상태와 알려진 경고
+## 10. 현재 검증 상태와 알려진 경고
 
 지금까지 이관된 범위는 `npm run lint`, `npm run build`와 주요 브라우저 동작 확인을 통과했다. 감정 이미지, 카메라 팝업, 분석 결과 저장, 조언의 일반·빈 화면, 포춘쿠키 상호작용도 확인했다.
 
@@ -347,7 +446,7 @@ eslint-plugin-vue
 
 현재 실행을 막지는 않는다. 모든 화면 이관 후 route lazy loading과 PWA 설정 정리 단계에서 확인한다.
 
-## 10. 최종 완료 체크리스트
+## 11. 최종 완료 체크리스트
 
 - [ ] 모든 사용자 라우트에서 `MigrationPlaceholder` 제거
 - [ ] 기존 Vue와 동일한 핵심 기능 및 화면 유지
@@ -363,11 +462,11 @@ eslint-plugin-vue
 - [ ] Vercel·Supabase 환경변수와 배포 확인
 - [ ] README와 배포 문서를 React 기준으로 갱신
 
-## 11. 바로 다음 작업
+## 12. 바로 다음 작업
 
-다음 작업은 기존 `src/stores/exchange.js`의 Supabase 로직을 `exchangeApi.js`와 `exchangeQueries.js`로 분리하는 것이다.
+다음 작업은 `src/views/exchange/WriteView.vue`를 `WriteView.jsx`로 이관하는 것이다.
 
-- 교환일기 서버 상태를 Pinia에서 TanStack Query로 옮긴다.
-- 목록·상세·댓글·초대에 사용할 사용자별 Query Key를 먼저 확정한다.
-- 데이터 계층을 검증한 뒤 `/exchange` 목록 화면을 React로 이관한다.
-- 화면 내부 필터와 모달은 로컬 상태로 두고, 여러 화면에 걸친 작성 초안이 필요할 때만 Zustand를 추가한다.
+- 기존 `useCreateExchangePostMutation`으로 방 생성과 이미지 업로드를 연결한다.
+- 분석 결과 화면에서 전달한 AI 요약을 작성 초깃값으로 사용한다.
+- 제목·내용·비밀번호·이미지 폼과 저장 중 상태를 이관한다.
+- 생성 성공 후 초대 정보와 상세 화면 이동 흐름을 확인한다.

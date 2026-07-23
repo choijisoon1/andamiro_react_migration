@@ -1,0 +1,34 @@
+// 기존 TabMenu.vue의 scoped 스타일 수치를 바꾸지 않고 React용으로 분리했다.
+.tab-menu {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex: 0 0 43px;
+  flex-direction: row;
+  gap: 0;
+  width: calc(100% + 48px);
+  height: 43px;
+  padding: 0;
+  margin-bottom: 10px;
+  margin-left: -24px;
+  background: $white;
+}
+
+.tab-menu__item {
+  flex: 1;
+  width: 100%;
+  padding: 12px 0;
+  color: #bbb;
+  font-size: $font14;
+  font-weight: $font-m;
+  cursor: pointer;
+  background: $white;
+  transition: all 0.15s;
+
+  &.is-active {
+    color: $primary;
+    font-weight: $font-b;
+    border-bottom: 2px solid $primary;
+  }
+}
