@@ -5,11 +5,13 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import App from '@/App'
 import { useAuthStore } from '@/stores/authStore'
 import MigrationPlaceholder from '@/views/MigrationPlaceholder'
+import EmotionView from '@/views/chat/EmotionView'
 import JoinStep1View from '@/views/login/JoinStep1View'
 import JoinStep2View from '@/views/login/JoinStep2View'
 import JoinStep3View from '@/views/login/JoinStep3View'
 import JoinStep4View from '@/views/login/JoinStep4View'
 import LoginView from '@/views/login/LoginView'
+import MainView from '@/views/main/MainView'
 
 function pendingDestination(search) {
   const params = new URLSearchParams(search)
@@ -71,9 +73,7 @@ function JoinRoute() {
 }
 
 const protectedRoutes = [
-  ['/main', '/main'],
   ['/chat', '/chat'],
-  ['/chat/emotion', '/chat/emotion'],
   ['/chat/result', '/chat/result'],
   ['/advice', '/advice'],
   ['/report', '/report'],
@@ -103,10 +103,14 @@ const router = createBrowserRouter([
       },
       {
         element: <ProtectedRoute />,
-        children: protectedRoutes.map(([path, labelPath]) => ({
-          path: path.slice(1),
-          element: <MigrationPlaceholder path={labelPath} />,
-        })),
+        children: [
+          { path: 'main', element: <MainView /> },
+          { path: 'chat/emotion', element: <EmotionView /> },
+          ...protectedRoutes.map(([path, labelPath]) => ({
+            path: path.slice(1),
+            element: <MigrationPlaceholder path={labelPath} />,
+          })),
+        ],
       },
       {
         path: 'exchange/join',

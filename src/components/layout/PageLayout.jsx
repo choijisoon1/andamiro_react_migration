@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 
 function PageLayout({
+  className = '',
   title = '',
   backTo = '',
   actionLabel = '',
   bodyClass = '',
+  mainClassName = '',
   hideHeader = false,
   hideBack = false,
   hideRight = false,
@@ -33,7 +35,7 @@ function PageLayout({
   ].filter(Boolean).join(' ')
 
   return (
-    <div className="wrap">
+    <div className={`wrap${className ? ` ${className}` : ''}`}>
       {!hideHeader && (
         <div id="headerWrap">
           <header id="header" className={headerClasses}>
@@ -70,7 +72,7 @@ function PageLayout({
       )}
 
       <div id="bodyWrap" className={bodyClass}>
-        <main>{children}</main>
+        <main className={mainClassName}>{children}</main>
         {footer}
       </div>
     </div>
