@@ -109,8 +109,8 @@ src/stores/exchange.js
 - `a239be8` face-api 카메라 표정 분석과 `/chat` 연결
 - `2001c10` 감정 분석 결과, 게이지, Supabase 일기 저장 흐름 이관
 - `4286636` 오늘의 조언, AI 데이터 보강, 빈 화면, 포춘쿠키 이관
-- 리포트의 요일별 에너지 차트, 감정 순위, 패턴 인사이트를 React로 이관
-- 교환일기 API·Query 계층과 목록·탭·로딩·빈 상태를 React로 이관
+- `b5663ca` 리포트의 요일별 에너지 차트, 감정 순위, 패턴 인사이트를 React로 이관
+- `85a2a88` 교환일기 API·Query 계층과 목록·탭·로딩·빈 상태를 React로 이관
 
 각 기능은 화면 단위로 린트·빌드 또는 브라우저 확인 후 커밋했다.
 
@@ -158,7 +158,7 @@ src/stores/exchange.js
 | `src/views/advice/AdviceView.vue` | `src/views/advice/AdviceView.jsx` | `src/views/advice/AdviceView.scss` | 완료 |
 | `src/views/report/ReportView.vue` | `src/views/report/ReportView.jsx` | 기존 `src/assets/scss/_report.scss` 재사용 | 완료 |
 | `src/views/exchange/ExchangeView.vue` | `src/views/exchange/ExchangeView.jsx` | 기존 `_layout.scss`, `_button.scss` 재사용 | 완료 |
-| `src/views/exchange/WriteView.vue` | `src/views/exchange/WriteView.jsx` 예정 | 기존 `_form.scss`, `_layout.scss` 검토 | 다음 작업 |
+| `src/views/exchange/WriteView.vue` | `src/views/exchange/WriteView.jsx` | `src/views/exchange/WriteView.scss` 및 기존 `_form.scss`, `_layout.scss` 재사용 | 완료 |
 | `src/views/exchange/DetailView.vue` | `src/views/exchange/DetailView.jsx` 예정 | 기존 `_layout.scss` 및 scoped 스타일 이관 예정 | 미완료 |
 | `src/views/exchange/JoinView.vue` | `src/views/exchange/JoinView.jsx` 예정 | Vue scoped 스타일 이관 예정 | 미완료 |
 | `src/views/exchange/RoomView.vue` | 요구사항 확인 후 `RoomView.jsx` 또는 제거 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
@@ -216,7 +216,7 @@ src/stores/exchange.js
 
 ## 6. 현재 React 이관 범위
 
-라우트 기준 총 20개 동작 지점 중 13개가 React 구현에 연결됐다. 단순 라우트 개수 기준 65%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+라우트 기준 총 20개 동작 지점 중 14개가 React 구현에 연결됐다. 단순 라우트 개수 기준 70%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -230,7 +230,7 @@ src/stores/exchange.js
 | `/advice` | 맞춤 조언·포춘쿠키 | React 완료 |
 | `/report` | 감정 리포트 | React 완료 |
 | `/exchange` | 교환일기 목록 | React 완료 |
-| `/exchange/write` | 교환일기 작성 | 임시 화면 |
+| `/exchange/write` | 교환일기 작성·이미지 업로드·AI 요약 반영 | React 완료 |
 | `/exchange/view/:id` | 교환일기 상세·댓글 | 임시 화면 |
 | `/exchange/join` | 초대 참여 | 임시 화면 |
 | `/exchange/room` | 교환일기 방 | 임시 화면 |
@@ -353,13 +353,13 @@ src/views/my/ChatViewView.vue
 
 완료 조건은 Pinia 없이 로그인 사용자별 목록을 조회하고 캐시를 분리하는 것이다.
 
-### 단계 C — 교환일기 작성·상세·참여
+### 단계 C — 교환일기 작성·상세·참여 (진행 중)
 
-1. 작성 및 이미지 업로드
-2. 분석 결과 화면에서 전달한 AI 요약 사용
-3. 상세·댓글·삭제
-4. 초대 생성·재생성·참여
-5. Edge Function과 푸시 흐름 검증
+1. [x] 작성 및 이미지 업로드
+2. [x] 분석 결과 화면에서 전달한 AI 요약 사용
+3. [ ] 상세·댓글·삭제
+4. [ ] 초대 생성·재생성·참여
+5. [ ] Edge Function과 푸시 흐름 검증
 
 완료 조건은 작성→목록→상세, 댓글 권한, 새 브라우저의 초대 링크가 모두 정상 동작하는 것이다.
 
@@ -464,9 +464,9 @@ eslint-plugin-vue
 
 ## 12. 바로 다음 작업
 
-다음 작업은 `src/views/exchange/WriteView.vue`를 `WriteView.jsx`로 이관하는 것이다.
+다음 작업은 `src/views/exchange/DetailView.vue`를 `DetailView.jsx`로 이관하는 것이다.
 
-- 기존 `useCreateExchangePostMutation`으로 방 생성과 이미지 업로드를 연결한다.
-- 분석 결과 화면에서 전달한 AI 요약을 작성 초깃값으로 사용한다.
-- 제목·내용·비밀번호·이미지 폼과 저장 중 상태를 이관한다.
-- 생성 성공 후 초대 정보와 상세 화면 이동 흐름을 확인한다.
+- 기존 `useExchangePostQuery`, `useExchangeCommentsQuery`로 상세와 댓글을 조회한다.
+- 댓글 작성·삭제, 교환일기 삭제 mutation을 연결한다.
+- 작성 직후 전달된 초대 URL과 기존 초대 정보 조회 흐름을 연결한다.
+- Vue scoped 스타일을 `DetailView.scss`로 그대로 옮기고 모바일 화면을 비교한다.
