@@ -12,6 +12,13 @@ function App() {
   const toastTimer = useRef(null)
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const pendingJoin = params.get('pendingJoin')
+    const pendingInvite = params.get('pendingInvite')
+
+    // OAuth가 루트로 돌아온 뒤에도 신규 사용자 가입 과정에서 초대 목적지를 유지한다.
+    if (pendingJoin) sessionStorage.setItem('pendingJoin', pendingJoin)
+    if (pendingInvite) sessionStorage.setItem('pendingInvite', pendingInvite)
     init()
   }, [init])
 

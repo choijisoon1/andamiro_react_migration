@@ -11,6 +11,7 @@ import EmotionView from '@/views/chat/EmotionView'
 import ResultView from '@/views/chat/ResultView'
 import DetailView from '@/views/exchange/DetailView'
 import ExchangeView from '@/views/exchange/ExchangeView'
+import JoinView from '@/views/exchange/JoinView'
 import WriteView from '@/views/exchange/WriteView'
 import JoinStep1View from '@/views/login/JoinStep1View'
 import JoinStep2View from '@/views/login/JoinStep2View'
@@ -121,7 +122,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'exchange/join',
-        element: <MigrationPlaceholder path="/exchange/join" />,
+        element: <JoinView />,
       },
       { path: 'my/profile', element: <Navigate replace to="/my" /> },
       { path: '*', element: <Navigate replace to="/" /> },
