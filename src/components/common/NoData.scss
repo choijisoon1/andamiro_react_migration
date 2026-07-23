@@ -1,0 +1,50 @@
+// 기존 NoData.vue의 scoped 스타일을 React 컴포넌트 단위로 그대로 분리했다.
+.no-data__title {
+  white-space: pre-line;
+}
+
+.no-data__icon-wrap {
+  display: block;
+}
+
+.no-data__icon,
+.no-my-date_icon {
+  display: block;
+  width: 210px;
+  height: 210px;
+  margin: 0 auto;
+  background: url("/assets/img/com/img-none.png") no-repeat center center / 100% auto;
+}
+
+.bg-\[\#F7F8FA\] {
+  background-color: #F7F8FA !important;
+}
+
+.bg-\[\#EEF3FF\] {
+  background-color: #EEF3FF !important;
+  border-radius: 50%;
+}
+
+.w-9 {
+  width: 80px !important;
+}
+
+.h-9 {
+  height: 80px !important;
+}
+
+.bg-\[url\(\'\/assets\/img\/my\/ico-book\.png\'\)\] {
+  background-image: url("/assets/img/my/ico-book.png") !important;
+}
+
+.bg-no-repeat {
+  background-repeat: no-repeat !important;
+}
+
+.bg-center {
+  background-position: center !important;
+}
+
+.bg-contain {
+  background-size: contain !important;
+}

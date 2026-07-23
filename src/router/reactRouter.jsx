@@ -5,6 +5,7 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 import App from '@/App'
 import { useAuthStore } from '@/stores/authStore'
 import MigrationPlaceholder from '@/views/MigrationPlaceholder'
+import AdviceView from '@/views/advice/AdviceView'
 import ChatView from '@/views/chat/ChatView'
 import EmotionView from '@/views/chat/EmotionView'
 import ResultView from '@/views/chat/ResultView'
@@ -75,7 +76,6 @@ function JoinRoute() {
 }
 
 const protectedRoutes = [
-  ['/advice', '/advice'],
   ['/report', '/report'],
   ['/exchange', '/exchange'],
   ['/exchange/write', '/exchange/write'],
@@ -108,6 +108,7 @@ const router = createBrowserRouter([
           { path: 'chat/emotion', element: <EmotionView /> },
           { path: 'chat', element: <ChatView /> },
           { path: 'chat/result', element: <ResultView /> },
+          { path: 'advice', element: <AdviceView /> },
           ...protectedRoutes.map(([path, labelPath]) => ({
             path: path.slice(1),
             element: <MigrationPlaceholder path={labelPath} />,

@@ -1,0 +1,88 @@
+// 기존 AdviceView.vue에 있던 화면 전용 스타일만 React 컴포넌트 옆으로 옮겼다.
+.advice-page {
+  main > section > .button-content { padding: 0; }
+
+  .card-item {
+    --card-tips-bg: #F2F9F3;
+    --card-tips-text: #7AC47D;
+
+    h3 span {
+      background-color: #fff;
+
+      &.icon01::before {
+        background: #74A37B;
+        mask-image: url("/assets/img/advice/ico-01.svg");
+        -webkit-mask-image: url("/assets/img/advice/ico-01.svg");
+      }
+    }
+  }
+}
+
+.modal-fortune {
+  .modal-full__body {
+    padding: 70px 0 20px;
+
+    .popup-fortune__tit {
+      display: block;
+      width: 100%;
+      max-width: 290px;
+      margin: 0 auto;
+    }
+
+    .fortune-cookie-block {
+      max-width: 375px;
+      height: 500px;
+      margin: 0 auto;
+      background: url("/assets/img/advice/popup-bg-fortune.png") no-repeat center -100px / 100%;
+
+      .cookie-img {
+        display: block;
+        width: 90%;
+        max-width: 250px;
+        margin: 0 auto;
+
+        &.shaking { animation: shake 0.15s ease-in-out infinite; }
+      }
+
+      p {
+        width: 100%;
+        margin: 22px auto;
+        text-align: center;
+
+        strong { color: $primary; }
+      }
+
+      .box {
+        max-width: 307px;
+        padding: 20px;
+        margin: 0 auto;
+        background: $white;
+        border-radius: 20px;
+        box-shadow: 0 4px 4px 0 rgb(221 221 221 / 20%);
+      }
+    }
+
+    .fortune-text {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 310px;
+      height: 210px;
+      margin: 0 auto;
+      background: url("/assets/img/advice/popup-bg-fortune2.png") no-repeat center / 310px auto;
+
+      p {
+        width: 75%;
+        padding: 0 20px;
+        color: $title;
+        font-size: $font18;
+      }
+    }
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px) rotate(-2deg); }
+  75% { transform: translateX(6px) rotate(2deg); }
+}
