@@ -7,6 +7,7 @@ import { useAuthStore } from '@/stores/authStore'
 import MigrationPlaceholder from '@/views/MigrationPlaceholder'
 import ChatView from '@/views/chat/ChatView'
 import EmotionView from '@/views/chat/EmotionView'
+import ResultView from '@/views/chat/ResultView'
 import JoinStep1View from '@/views/login/JoinStep1View'
 import JoinStep2View from '@/views/login/JoinStep2View'
 import JoinStep3View from '@/views/login/JoinStep3View'
@@ -74,7 +75,6 @@ function JoinRoute() {
 }
 
 const protectedRoutes = [
-  ['/chat/result', '/chat/result'],
   ['/advice', '/advice'],
   ['/report', '/report'],
   ['/exchange', '/exchange'],
@@ -107,6 +107,7 @@ const router = createBrowserRouter([
           { path: 'main', element: <MainView /> },
           { path: 'chat/emotion', element: <EmotionView /> },
           { path: 'chat', element: <ChatView /> },
+          { path: 'chat/result', element: <ResultView /> },
           ...protectedRoutes.map(([path, labelPath]) => ({
             path: path.slice(1),
             element: <MigrationPlaceholder path={labelPath} />,

@@ -1,0 +1,142 @@
+.result-main {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+}
+
+.result-main .text-content {
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.result-main .text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.result-main .grap-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.result-main .grap-group.score-chart {
+  position: relative;
+  width: 240px;
+  height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-main .gauge-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -38%);
+  gap: 2px;
+  pointer-events: none;
+}
+
+.result-main .gauge-title { font-size: $font14; color: $text-sub; }
+.result-main .gauge-score {
+  font-size: 44px;
+  font-weight: $font-eb;
+  color: $title;
+  line-height: 1;
+}
+.result-main .gauge-label {
+  font-size: $font12;
+  color: $text-disabled;
+  font-weight: $font-m;
+  letter-spacing: 0.08em;
+}
+
+.result-main .grap-group.score-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+.result-main .score-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-main .score-item__label { color: $text-sub; }
+.result-main .score-item__val {
+  font-size: $font16;
+  font-weight: $font-sb;
+  color: $title;
+}
+
+.result-main .score-item__val small { font-size: $font12; color: $text-disabled; }
+
+.result-main .score-item__bar {
+  width: 100%;
+  height: 14px;
+  background: #eef3fc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.result-main .score-item__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--result-gauge-from), var(--result-gauge-to));
+  border-radius: 100px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.result-main .card-item:first-of-type {
+  --card-tips-bg: #FFFCF6;
+  --card-tips-text: #786258;
+}
+
+.result-main .card-item:nth-of-type(2) h3 span { background-color:#F0F9F1; }
+
+.result-main .icon01::before {
+  background: #ffa014;
+  mask-image: url("/assets/img/result/ico-01.svg");
+  -webkit-mask-image: url("/assets/img/result/ico-01.svg");
+}
+
+.result-main .icon02::before {
+  background: #7AC47D;
+  mask-image: url("/assets/img/result/ico-02.svg");
+  -webkit-mask-image: url("/assets/img/result/ico-02.svg");
+}
+
+.result-main + .button-ctp .button-content--duo .btn-ctp { flex: 0 0 120px; }
+.result-main + .button-ctp .button-content--duo .btn-ctp--secondary { flex: 1; }
+
+@keyframes result-pop-in {
+  0%   { opacity: 0; transform: scale(0.82); }
+  70%  { transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes result-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result-main .grap-group.score-chart {
+  animation: result-pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.result-main .score-item { animation: result-fade-up 0.4s ease both; }
+.result-main .score-item:nth-child(1) { animation-delay: 0.15s; }
+.result-main .score-item:nth-child(2) { animation-delay: 0.25s; }
+.result-main .score-item:nth-child(3) { animation-delay: 0.35s; }
+.result-main .score-item:nth-child(4) { animation-delay: 0.45s; }
