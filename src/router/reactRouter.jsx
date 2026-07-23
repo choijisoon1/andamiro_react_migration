@@ -15,6 +15,7 @@ import JoinStep3View from '@/views/login/JoinStep3View'
 import JoinStep4View from '@/views/login/JoinStep4View'
 import LoginView from '@/views/login/LoginView'
 import MainView from '@/views/main/MainView'
+import ReportView from '@/views/report/ReportView'
 
 function pendingDestination(search) {
   const params = new URLSearchParams(search)
@@ -76,7 +77,6 @@ function JoinRoute() {
 }
 
 const protectedRoutes = [
-  ['/report', '/report'],
   ['/exchange', '/exchange'],
   ['/exchange/write', '/exchange/write'],
   ['/exchange/view/:id', '/exchange/view/:id'],
@@ -109,6 +109,7 @@ const router = createBrowserRouter([
           { path: 'chat', element: <ChatView /> },
           { path: 'chat/result', element: <ResultView /> },
           { path: 'advice', element: <AdviceView /> },
+          { path: 'report', element: <ReportView /> },
           ...protectedRoutes.map(([path, labelPath]) => ({
             path: path.slice(1),
             element: <MigrationPlaceholder path={labelPath} />,
