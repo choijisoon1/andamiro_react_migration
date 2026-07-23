@@ -1,0 +1,373 @@
+# Vue → React 이관 현황 및 완료 계획
+
+> 마지막 갱신: 2026-07-23
+> 대상: `C:\xampp\htdocs\andamiro_react_migration`의 `main` 브랜치
+
+## 1. 목적과 최종 목표
+
+이 문서는 기존 Vue 3 프로젝트를 Vite + React로 이관하는 작업의 기준 문서다. 처음 저장소를 분리한 시점부터 지금까지의 변경, 현재 실제로 동작하는 React 범위, 남은 작업, 완료 조건을 기록한다.
+
+| 구분 | 기존 | 목표 |
+| --- | --- | --- |
+| UI | Vue 3 | React 19 |
+| 라우터 | Vue Router | React Router |
+| 상태관리 전체 | Pinia | Zustand + TanStack Query |
+| 클라이언트 상태 | Pinia 저장소 | Zustand |
+| Supabase 서버 상태 | Pinia 저장소에서 직접 조회·저장 | TanStack Query + API 모듈 |
+| 빌드·백엔드 | Vite, Supabase, Vercel | 유지 |
+| 스타일 | 기존 SCSS | 수치·이미지 경로를 유지하며 재사용 |
+
+이관은 화면을 새로 디자인하는 작업이 아니다. 기존 px, 여백, 색상, 이미지와 애니메이션 값을 임의로 바꾸지 않고 React에서 같은 기능과 화면을 만드는 것이 우선이다.
+
+최종적으로 Pinia는 프로젝트에서 완전히 제거한다. 다만 기존 Pinia 저장소의 모든 코드를 Zustand로만 1:1 변환하는 것이 아니라, Pinia가 담당하던 로직을 데이터 성격에 따라 Zustand와 TanStack Query로 나눠서 이관한다.
+
+```text
+기존 Pinia 상태관리
+  ├─ 로그인·회원가입·작성 중 채팅 같은 클라이언트 상태 → Zustand
+  └─ 일기·통계·교환일기처럼 Supabase에서 가져오는 서버 상태 → TanStack Query
+```
+
+## 2. 저장소 준비 과정
+
+기존 Vue 저장소는 원본 보존 및 비교용으로 유지하고, 코드를 새 폴더로 복사했다.
+
+```text
+C:\xampp\htdocs\andamiro_react_migration
+```
+
+기존 `.git`, `node_modules`, `dist`, `supabase/.temp`, 실제 `.env` 파일은 복사 대상에서 제외했다. 새 폴더에서 `git init -b main`으로 별도 저장소를 만들었으므로 이관 중 문제가 생겨도 기존 Vue 저장소에는 영향을 주지 않는다.
+
+- 개발자에게 받은 환경변수는 프로젝트 최상단 `.env.local`에 배치
+- `.env.local`과 Supabase 임시 폴더는 Git에서 제외
+- 이관 전 `npm ci`, `npm run dev`로 원본 프로젝트 실행 확인
+- Windows에서 Sass 토큰 경로가 깨지는 문제 보정
+
+## 3. 확정된 상태관리 원칙
+
+### Zustand
+
+여러 React 화면이 공유하지만 서버에서 다시 조회하는 데이터가 아닌 상태를 담당한다.
+
+| 파일 | 역할 | 상태 |
+| --- | --- | --- |
+| `src/stores/authStore.js` | Supabase 인증, 사용자·프로필, 로그인·로그아웃 | 사용 중 |
+| `src/stores/joinStore.js` | 회원가입 단계의 임시 입력값 | 사용 중 |
+| `src/stores/chatStore.js` | 감정, 작성 중 채팅, 메시지, 기록 날짜 | 사용 중 |
+
+향후 교환일기 작성 초안이 여러 화면에 걸쳐 유지돼야 할 때만 별도 Zustand 저장소를 추가한다.
+
+### TanStack Query
+
+Supabase에서 가져오며 캐시·재조회·무효화가 필요한 서버 데이터를 담당한다.
+
+- 월별·날짜별·상세 일기
+- 일기 통계
+- 일기 저장 및 AI 분석 결과 갱신
+- 향후 교환일기 목록·상세·초대·댓글·참여 정보
+
+현재 일기 데이터 흐름:
+
+```text
+React 화면
+  → src/queries/diaryQueries.js
+    → src/api/diaryApi.js
+      → Supabase
+```
+
+### React 로컬 상태
+
+모달 열림, 포춘쿠키 애니메이션, 달력 선택 날짜, 저장 중 표시, 카메라 팝업처럼 한 화면에서만 쓰는 값은 `useState`와 `useRef`로 관리한다.
+
+### Pinia를 아직 삭제하지 않는 이유
+
+아직 React로 옮기지 않은 리포트·교환일기·마이 화면이 기존 Pinia 코드를 참고한다. 모든 React 화면과 API 모듈이 완성되고 회귀 검증까지 끝난 뒤 아래 기존 저장소와 Vue 의존성을 한 번에 제거한다.
+
+```text
+src/stores/auth.js
+src/stores/join.js
+src/stores/chat.js
+src/stores/diary.js
+src/stores/exchange.js
+```
+
+## 4. 처음부터 지금까지의 Git 기록
+
+### 2026-07-22: 원본 보존과 React 기반
+
+- `d994627` 원본 Vue 소스 전체를 새 저장소의 기준점으로 저장
+- `61c0a2a` `supabase/.temp`를 `.gitignore`에 추가
+- `15bfb0e` Windows Sass 경로 정규화
+- `f46d695` React, React DOM, React Router, Zustand 설치
+- `df0d78c` React 진입점, Router, App 셸, 인증 Zustand, 로그인 화면 추가
+- `fe69d9e` 회원가입 1~4단계와 `joinStore`, 공통 폼·레이아웃 컴포넌트 이관
+
+### 2026-07-23: 핵심 일기 흐름
+
+- `c201f1b` TanStack Query 연결, 일기 API/Query 분리, 메인 달력과 감정 선택 이관
+- `6a266a8` 채팅 입력창과 첨부 모달 구조 이관
+- `d57b3e7` AI 채팅과 Web Speech API 음성 입력 이관
+- `a239be8` face-api 카메라 표정 분석과 `/chat` 연결
+- `2001c10` 감정 분석 결과, 게이지, Supabase 일기 저장 흐름 이관
+- `4286636` 오늘의 조언, AI 데이터 보강, 빈 화면, 포춘쿠키 이관
+- 리포트의 요일별 에너지 차트, 감정 순위, 패턴 인사이트를 React로 이관
+
+각 기능은 화면 단위로 린트·빌드 또는 브라우저 확인 후 커밋했다.
+
+## 5. 현재 React 이관 범위
+
+라우트 기준 총 20개 동작 지점 중 12개가 React 구현에 연결됐다. 단순 라우트 개수 기준 60%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+
+| 경로 | 기능 | 상태 |
+| --- | --- | --- |
+| `/` | 인증 초기화·진입 분기·스플래시 | React 완료 |
+| `/login` | 로그인 | React 완료 |
+| `/join/1` ~ `/join/4` | 회원가입 4단계 | React 완료 |
+| `/main` | 메인 달력·일기 목록 | React 완료 |
+| `/chat/emotion` | 감정 선택 | React 완료 |
+| `/chat` | AI 채팅·음성·카메라 | React 완료 |
+| `/chat/result` | 분석 결과·일기 저장 | React 완료 |
+| `/advice` | 맞춤 조언·포춘쿠키 | React 완료 |
+| `/report` | 감정 리포트 | React 완료 |
+| `/exchange` | 교환일기 목록 | 임시 화면 |
+| `/exchange/write` | 교환일기 작성 | 임시 화면 |
+| `/exchange/view/:id` | 교환일기 상세·댓글 | 임시 화면 |
+| `/exchange/join` | 초대 참여 | 임시 화면 |
+| `/exchange/room` | 교환일기 방 | 임시 화면 |
+| `/my` | 마이페이지 | 임시 화면 |
+| `/my/databack` | 내 기록 관리 | 임시 화면 |
+| `/my/chat-view` | 저장된 일기 상세 | 임시 화면 |
+
+`/my/profile`은 기존과 동일하게 `/my`로 이동하는 redirect다.
+
+현재 연결된 핵심 사용자 흐름:
+
+```text
+로그인
+  → 신규 사용자 회원가입
+  → 메인
+  → 감정 선택
+  → AI 채팅 / 음성 입력 / 카메라 표정 분석
+  → 감정 분석 결과
+  → Supabase 일기 저장
+  → 메인 달력 조회
+  → 오늘의 조언 / 포춘쿠키
+```
+
+React 이관 후에도 유지되는 기반:
+
+- Supabase 인증 세션과 일기 테이블
+- Anthropic `/api/chat` 및 Vercel 함수
+- PWA 등록, Service Worker, 알림 토스트
+- face-api 모델과 카메라 분석
+- public 이미지와 기존 global SCSS
+
+## 6. 남은 작업 상세
+
+### 교환일기 데이터 계층
+
+현재 `src/stores/exchange.js`에는 목록, 작성, 초대, 참여, 댓글, 삭제, 푸시 요청이 섞여 있다. 이를 다음처럼 분리한다.
+
+```text
+src/api/exchangeApi.js
+  - 게시물 목록·상세·작성·삭제
+  - 초대 조회·재생성·참여
+  - 댓글 조회·작성·삭제
+  - 알림 요청
+
+src/queries/exchangeQueries.js
+  - 사용자별 Query Key
+  - 목록·상세·댓글 Query
+  - 작성·삭제·참여 Mutation
+  - 성공 후 관련 캐시 무효화
+```
+
+화면 필터와 모달은 로컬 상태로 두고, 여러 경로에 걸쳐 유지할 작성 초안만 Zustand 후보로 둔다.
+
+### 교환일기 화면
+
+권장 이관 순서:
+
+1. `/exchange` 목록·탭·로딩·빈 상태
+2. `/exchange/write` 작성·이미지 업로드·AI 결과 전달
+3. `/exchange/view/:id` 상세·초대·댓글·삭제
+4. `/exchange/join` 초대 미리보기·비밀번호·참여
+5. `/exchange/room` 기존 구현과 실제 요구사항 확인 후 처리
+
+검증할 중요 기능:
+
+- Supabase Edge Function
+- 초대 코드·토큰과 URL query
+- 작성자·참여자 권한
+- 이미지 Storage 업로드
+- 댓글 알림
+- 결과 화면에서 전달한 navigation state
+
+### 마이페이지
+
+대상:
+
+```text
+src/views/my/MyView.vue
+src/views/my/ProfileView.vue
+src/views/my/DataBack.vue
+src/views/my/ChatViewView.vue
+```
+
+남은 기능:
+
+- 프로필 조회·수정과 기존 `ProfileForm.jsx` 재사용
+- 일기 통계와 교환일기 개수
+- 푸시 알림 구독·해제
+- 로그아웃과 회원 탈퇴 Edge Function
+- 내 기록 목록·선택·복원
+- 저장된 일기 상세와 감정 게이지
+
+### 남은 공통 컴포넌트
+
+실제 사용하는 화면을 옮길 때 함께 React로 변환한다.
+
+- `LoadingSkeleton.vue`
+- `TabMenu.vue`
+- `FooterDouble.vue`
+- 리포트·일기 상세용 ECharts 래퍼
+
+`HelloWorld.vue`, `counter.js`, `ChatListView.vue`, `RoomView.vue`처럼 예제이거나 내용이 거의 없는 파일은 마지막에 사용 여부와 요구사항을 확인하고 정리한다.
+
+## 7. 완료까지의 권장 순서
+
+### 단계 A — 리포트 완성 (완료)
+
+1. Vue 화면의 계산과 차트 옵션 분석
+2. React ECharts 래퍼 작성
+3. `ReportView.jsx` 작성 및 `/report` 연결
+4. 데이터 있음·없음 브라우저 검증
+5. 린트·빌드 후 한글 커밋
+
+완료 조건은 기존 그래프 값과 순위 계산이 같고, SCSS와 이미지 크기가 유지되며, 월별 데이터가 Query 캐시와 연결되는 것이다.
+
+### 단계 B — 교환일기 기반과 목록
+
+1. `exchange.js`의 Supabase 호출을 API와 Query Hook으로 분리
+2. `LoadingSkeleton`, `TabMenu` React 이관
+3. 목록, 내 글 필터, 빈 상태, 로딩 상태 이관
+4. 초대 query로 들어오는 진입 처리
+
+완료 조건은 Pinia 없이 로그인 사용자별 목록을 조회하고 캐시를 분리하는 것이다.
+
+### 단계 C — 교환일기 작성·상세·참여
+
+1. 작성 및 이미지 업로드
+2. 분석 결과 화면에서 전달한 AI 요약 사용
+3. 상세·댓글·삭제
+4. 초대 생성·재생성·참여
+5. Edge Function과 푸시 흐름 검증
+
+완료 조건은 작성→목록→상세, 댓글 권한, 새 브라우저의 초대 링크가 모두 정상 동작하는 것이다.
+
+### 단계 D — 마이페이지
+
+1. 마이 메인과 프로필 수정
+2. 일기·교환일기 통계
+3. 푸시 구독
+4. 내 기록 목록과 상세
+5. 로그아웃·회원 탈퇴
+
+완료 조건은 프로필 변경, 일기 상세, 푸시 지원·미지원 브라우저, 탈퇴 후 세션 정리가 정상인 것이다.
+
+### 단계 E — Vue·Pinia 제거
+
+모든 React 라우트의 비교 검증이 끝난 뒤에만 수행한다.
+
+1. `MigrationPlaceholder.jsx` 제거
+2. 사용하지 않는 `.vue` 파일과 Vue 진입점·라우터 제거
+3. 기존 Pinia 저장소 제거
+4. Vue 전용 Vite·ESLint 설정 제거
+5. 아래 패키지 제거
+
+```text
+vue
+vue-router
+pinia
+vue-echarts
+@vitejs/plugin-vue
+eslint-plugin-vue
+```
+
+6. Vue·Pinia import가 0개인지 전체 검색
+7. lockfile 갱신 후 `npm ci`부터 다시 검증
+
+### 단계 F — 최종 회귀 검증과 배포
+
+- 로그인, OAuth 콜백, 신규·기존 사용자 분기
+- 세션 복원과 보호 라우트 직접 진입
+- 일기 작성 전체 흐름과 네트워크 오류
+- 카메라·마이크 권한 허용 및 거부
+- 달력, 과거 일기, 조언, 리포트
+- 교환일기 작성·초대·댓글·권한
+- 프로필·푸시·탈퇴
+- 모바일 화면과 PWA 설치 모드
+- Vercel 환경변수와 `/api/chat`
+- Supabase RLS와 Edge Function 권한
+
+## 8. 스타일과 코드 작성 규칙
+
+1. 기존 global SCSS는 가능한 그대로 재사용한다.
+2. Vue의 `<style scoped>`는 같은 React 컴포넌트 옆 `.scss` 파일로 옮긴다.
+3. px, rem, 간격, 색상, radius, 애니메이션 시간은 임의 변경하지 않는다.
+4. `public/assets` 이미지 경로를 그대로 사용한다.
+5. selector 충돌 시 시각 결과를 바꾸지 않는 범위에서만 범위를 좁힌다.
+6. 데스크톱과 모바일 너비를 모두 비교한다.
+
+컴포넌트 폴더에 새 SCSS가 생기는 이유는 새 디자인을 만들기 위해서가 아니라 Vue 파일 내부의 scoped 스타일을 React import 구조로 분리하기 위해서다.
+
+- React 코드는 JavaScript/JSX를 사용하고 이번 범위에서 TSX로 전환하지 않는다.
+- 구조를 바꾼 이유가 있는 곳에는 짧은 한글 주석을 남긴다.
+- 당연한 코드를 줄마다 설명하는 주석은 피한다.
+- 화면 단위로 린트·빌드·브라우저 확인 후 커밋한다.
+- 커밋 메시지는 한글을 기본으로 한다.
+
+권장 커밋 예시:
+
+```text
+기능: 리포트 화면과 감정 차트를 리액트로 이관
+구조: 교환일기 서버 상태를 TanStack Query로 분리
+수정: 모바일 조언 카드의 이미지 경로를 보정
+정리: Vue와 Pinia 의존성을 제거
+```
+
+## 9. 현재 검증 상태와 알려진 경고
+
+지금까지 이관된 범위는 `npm run lint`, `npm run build`와 주요 브라우저 동작 확인을 통과했다. 감정 이미지, 카메라 팝업, 분석 결과 저장, 조언의 일반·빈 화면, 포춘쿠키 상호작용도 확인했다.
+
+빌드는 성공하지만 다음 경고는 남아 있다.
+
+- `face-api.js`의 Node `fs` 참조에 대한 Vite 안내
+- 메인 JavaScript chunk가 500kB보다 크다는 경고
+- PWA의 `inlineDynamicImports` deprecation 경고
+
+현재 실행을 막지는 않는다. 모든 화면 이관 후 route lazy loading과 PWA 설정 정리 단계에서 확인한다.
+
+## 10. 최종 완료 체크리스트
+
+- [ ] 모든 사용자 라우트에서 `MigrationPlaceholder` 제거
+- [ ] 기존 Vue와 동일한 핵심 기능 및 화면 유지
+- [ ] Supabase 서버 상태를 API 모듈 + TanStack Query로 관리
+- [ ] 필요한 전역 클라이언트 상태를 Zustand로 관리
+- [ ] 런타임에서 `.vue`, Pinia, Vue Router를 사용하지 않음
+- [ ] Vue 전용 패키지와 설정 제거
+- [ ] `npm ci` 후 `npm run lint:check` 성공
+- [ ] `npm run build` 성공
+- [ ] 로그인부터 일기 저장·조회까지 전체 흐름 검증
+- [ ] 교환일기 초대·댓글·권한 검증
+- [ ] PWA·카메라·마이크·푸시의 허용/거부 흐름 검증
+- [ ] Vercel·Supabase 환경변수와 배포 확인
+- [ ] README와 배포 문서를 React 기준으로 갱신
+
+## 11. 바로 다음 작업
+
+다음 작업은 기존 `src/stores/exchange.js`의 Supabase 로직을 `exchangeApi.js`와 `exchangeQueries.js`로 분리하는 것이다.
+
+- 교환일기 서버 상태를 Pinia에서 TanStack Query로 옮긴다.
+- 목록·상세·댓글·초대에 사용할 사용자별 Query Key를 먼저 확정한다.
+- 데이터 계층을 검증한 뒤 `/exchange` 목록 화면을 React로 이관한다.
+- 화면 내부 필터와 모달은 로컬 상태로 두고, 여러 화면에 걸친 작성 초안이 필요할 때만 Zustand를 추가한다.

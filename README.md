@@ -1,6 +1,9 @@
 # andamiro
 
-Vue 3 + Vite 기반 감정 일기 앱입니다.
+기존 Vue 3 앱을 Vite + React로 단계적으로 이관 중인 감정 일기 앱입니다.
+
+진행 범위, 상태관리 원칙, 남은 화면과 완료 기준은
+[Vue → React 이관 현황 및 완료 계획](docs/react-migration-plan.md)에서 관리합니다.
 
 ## Project Setup
 
