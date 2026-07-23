@@ -80,13 +80,14 @@ export function useExchangeCommentsQuery(postId) {
   })
 }
 
-export function useExchangeInvitationQuery(postId) {
+export function useExchangeInvitationQuery(postId, enabled = true) {
   const userId = useAuthStore((state) => state.user?.id)
 
   return useQuery({
     queryKey: exchangeKeys.invitation(userId, postId),
     queryFn: () => fetchExchangeInvitation({ postId }),
-    enabled: Boolean(userId && postId),
+    // 초대 정보는 방 소유자에게만 필요하므로 상세 화면에서 조회 여부를 정한다.
+    enabled: Boolean(userId && postId && enabled),
   })
 }
 
@@ -182,10 +183,12 @@ export function useCreateExchangeCommentMutation(postId) {
 
   return useMutation({
     mutationFn: (content) => createExchangeComment({ userId, postId, content }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: exchangeKeys.comments(userId, postId),
-      })
+    onSuccess: (comment) => {
+      // Pinia 배열에 직접 추가하던 동작을 사용자별 Query 캐시 갱신으로 대체한다.
+      queryClient.setQueryData(
+        exchangeKeys.comments(userId, postId),
+        (comments = []) => [...comments, comment],
+      )
       queryClient.invalidateQueries({
         queryKey: exchangeKeys.detail(userId, postId),
       })
@@ -202,10 +205,13 @@ export function useDeleteExchangeCommentMutation(postId) {
     mutationFn: (commentId) => (
       deleteExchangeComment({ userId, commentId })
     ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: exchangeKeys.comments(userId, postId),
-      })
+    onSuccess: (_, deletedCommentId) => {
+      queryClient.setQueryData(
+        exchangeKeys.comments(userId, postId),
+        (comments = []) => comments.filter(
+          (comment) => String(comment.id) !== String(deletedCommentId),
+        ),
+      )
       queryClient.invalidateQueries({
         queryKey: exchangeKeys.detail(userId, postId),
       })

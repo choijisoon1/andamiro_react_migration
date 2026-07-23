@@ -1,0 +1,412 @@
+.detail-page {
+  .detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 0;
+    padding-bottom: 12px;
+  }
+
+  .detail-main > .loading-skeleton {
+    padding: 0 24px;
+  }
+
+  .detail-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: $text-disabled;
+    font-size: $font14;
+  }
+
+  .view-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .detail-post {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail-post__img {
+    width: 100%;
+    max-height: 280px !important;
+    object-fit: contain !important;
+    background: $white;
+  }
+
+  // Vue scoped 스타일과 같은 범위를 유지해 다른 화면의 profile 클래스와 충돌하지 않게 한다.
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 4px;
+
+    .profile-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: $primary;
+      color: $white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-b;
+      flex-shrink: 0;
+    }
+
+    .profile-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .title {
+        color: $title;
+        font-weight: $font-b;
+      }
+
+      .sub-text {
+        color: $text-disabled;
+        font-size: $font12;
+      }
+    }
+  }
+
+  .subject {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+
+    h2 {
+      display: block;
+      color: $title;
+      font-weight: $font-b;
+      font-size: $font20;
+      line-height: 1.4;
+    }
+
+    .subject-content {
+      color: $text-default;
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .button-content {
+      text-align: right;
+
+      .detail-invite-btn {
+        width: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        background: $white;
+        border-radius: 20px;
+        color: $primary;
+        border: 1px solid $border;
+        font-size: $font12;
+        font-weight: $font-sb;
+      }
+    }
+  }
+
+  .detail-comments {
+    > div {
+      padding: 12px 0 0;
+      border-top: 1px solid $border;
+    }
+  }
+
+  .detail-comments__heading {
+    color: $text-disabled;
+    font-weight: $font-l;
+    font-size: $font14;
+  }
+
+  .detail-comment-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 0 12px;
+    color: $text-disabled;
+  }
+
+  .detail-comment-empty__count {
+    color: $title;
+    font-size: $font14;
+    font-weight: $font-sb;
+  }
+
+  .detail-comment-empty__divider {
+    width: 100%;
+    height: 1px;
+    background: $border;
+  }
+
+  .detail-comment-empty__text {
+    font-size: $font14;
+  }
+
+  .detail-comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail-comment-item {
+    display: flex;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    &.is-mine {
+      .comment-avatar {
+        background: #c0c0c0;
+      }
+    }
+  }
+
+  .comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $primary;
+    color: $white;
+    font-size: $font14;
+    font-weight: $font-b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .comment-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .comment-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .comment-name {
+    font-size: $font14;
+    font-weight: $font-b;
+    color: $title;
+  }
+
+  .comment-time {
+    font-size: $font12;
+    color: $text-sub;
+  }
+
+  .comment-text {
+    font-size: $font14;
+    color: $text-default;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .comment-action {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font: inherit;
+    color: $text-disabled;
+    align-self: flex-start;
+  }
+
+  .comment-action:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .detail-error {
+    padding: 0 24px 8px;
+    color: #c62828;
+    font-size: $font13;
+  }
+
+  .detail-input-bar {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid $border;
+    background: $white;
+    position: relative;
+  }
+
+  .detail-input {
+    flex: 1;
+    min-height: 50px;
+    max-height: 110px;
+    padding: 10px 14px;
+    border-radius: 30px;
+    resize: none;
+    line-height: 1.5;
+    color: $title;
+    background: #F5F6F8;
+    border: 0;
+
+    &::placeholder {
+      color: $text-disabled;
+    }
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+
+  .detail-send {
+    position: absolute;
+    top: 17px;
+    right: 22px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: $primary;
+    color: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 2;
+
+    &:disabled {
+      background: #E0E0E0;
+      color: $text-disabled;
+    }
+
+    svg {
+      display: block;
+    }
+  }
+}
+
+.detail-more-btn {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: $title;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: $white;
+  font-size: $font14;
+  padding: 10px 20px;
+  border-radius: 100px;
+  white-space: nowrap;
+  z-index: 2000;
+  pointer-events: none;
+  animation: detail-toast-enter 0.25s ease;
+}
+
+.detail-more-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.detail-more-action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid $border;
+  background: #f7f9fc;
+  text-align: left;
+
+  &__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    strong {
+      font-size: $font14;
+      font-weight: $font-sb;
+      color: $title;
+    }
+
+    small {
+      font-size: $font12;
+      color: $text-disabled;
+    }
+  }
+
+  &--share {
+    background: #f2f6ff;
+    border-color: #d7e3ff;
+
+    .detail-more-action__icon {
+      background: #e7efff;
+      color: $primary;
+    }
+  }
+
+  &--delete {
+    background: #fff2f2;
+    border-color: #ffd0d0;
+
+    .detail-more-action__icon {
+      background: #ffe2e2;
+      color: #d64545;
+    }
+
+    strong,
+    small {
+      color: #d64545;
+    }
+  }
+}
+
+@keyframes detail-toast-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

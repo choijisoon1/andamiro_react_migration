@@ -159,7 +159,7 @@ src/stores/exchange.js
 | `src/views/report/ReportView.vue` | `src/views/report/ReportView.jsx` | 기존 `src/assets/scss/_report.scss` 재사용 | 완료 |
 | `src/views/exchange/ExchangeView.vue` | `src/views/exchange/ExchangeView.jsx` | 기존 `_layout.scss`, `_button.scss` 재사용 | 완료 |
 | `src/views/exchange/WriteView.vue` | `src/views/exchange/WriteView.jsx` | `src/views/exchange/WriteView.scss` 및 기존 `_form.scss`, `_layout.scss` 재사용 | 완료 |
-| `src/views/exchange/DetailView.vue` | `src/views/exchange/DetailView.jsx` 예정 | 기존 `_layout.scss` 및 scoped 스타일 이관 예정 | 미완료 |
+| `src/views/exchange/DetailView.vue` | `src/views/exchange/DetailView.jsx` | `src/views/exchange/DetailView.scss` 및 기존 `_layout.scss` 재사용 | 완료 |
 | `src/views/exchange/JoinView.vue` | `src/views/exchange/JoinView.jsx` 예정 | Vue scoped 스타일 이관 예정 | 미완료 |
 | `src/views/exchange/RoomView.vue` | 요구사항 확인 후 `RoomView.jsx` 또는 제거 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
 | `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` 예정 | 기존 `src/assets/scss/_my.scss` 검토 | 미완료 |
@@ -216,7 +216,7 @@ src/stores/exchange.js
 
 ## 6. 현재 React 이관 범위
 
-라우트 기준 총 20개 동작 지점 중 14개가 React 구현에 연결됐다. 단순 라우트 개수 기준 70%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+라우트 기준 총 20개 동작 지점 중 15개가 React 구현에 연결됐다. 단순 라우트 개수 기준 75%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -231,7 +231,7 @@ src/stores/exchange.js
 | `/report` | 감정 리포트 | React 완료 |
 | `/exchange` | 교환일기 목록 | React 완료 |
 | `/exchange/write` | 교환일기 작성·이미지 업로드·AI 요약 반영 | React 완료 |
-| `/exchange/view/:id` | 교환일기 상세·댓글 | 임시 화면 |
+| `/exchange/view/:id` | 교환일기 상세·댓글·공유·삭제 | React 완료 |
 | `/exchange/join` | 초대 참여 | 임시 화면 |
 | `/exchange/room` | 교환일기 방 | 임시 화면 |
 | `/my` | 마이페이지 | 임시 화면 |
@@ -357,7 +357,7 @@ src/views/my/ChatViewView.vue
 
 1. [x] 작성 및 이미지 업로드
 2. [x] 분석 결과 화면에서 전달한 AI 요약 사용
-3. [ ] 상세·댓글·삭제
+3. [x] 상세·댓글·삭제
 4. [ ] 초대 생성·재생성·참여
 5. [ ] Edge Function과 푸시 흐름 검증
 
@@ -464,9 +464,9 @@ eslint-plugin-vue
 
 ## 12. 바로 다음 작업
 
-다음 작업은 `src/views/exchange/DetailView.vue`를 `DetailView.jsx`로 이관하는 것이다.
+다음 작업은 `src/views/exchange/JoinView.vue`를 `JoinView.jsx`로 이관하는 것이다.
 
-- 기존 `useExchangePostQuery`, `useExchangeCommentsQuery`로 상세와 댓글을 조회한다.
-- 댓글 작성·삭제, 교환일기 삭제 mutation을 연결한다.
-- 작성 직후 전달된 초대 URL과 기존 초대 정보 조회 흐름을 연결한다.
-- Vue scoped 스타일을 `DetailView.scss`로 그대로 옮기고 모바일 화면을 비교한다.
+- 초대 토큰 미리보기와 로그인 전·후 진입 흐름을 연결한다.
+- 초대받은 방의 비밀번호 검증과 참여 mutation을 연결한다.
+- 잘못되거나 만료된 초대 링크의 오류 화면을 이관한다.
+- Vue scoped 스타일을 `JoinView.scss`로 그대로 옮기고 새 브라우저 진입을 검증한다.
