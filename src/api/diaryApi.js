@@ -52,6 +52,19 @@ export async function fetchDiariesByMonth({ userId, yearMonth }) {
   return data ?? []
 }
 
+export async function fetchAllDiaries({ userId }) {
+  requireUserId(userId)
+  const { data, error } = await supabase
+    .from('emotion_records')
+    .select('*')
+    .eq('user_id', userId)
+    .order('record_date', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data ?? []
+}
+
 export async function fetchDiaryById({ userId, id }) {
   requireUserId(userId)
   const { data, error } = await supabase
@@ -149,4 +162,18 @@ export async function updateDiaryResult({ userId, id, result }) {
 
   if (error) throw error
   return data
+}
+
+export async function deleteDiaries({ userId, ids }) {
+  requireUserId(userId)
+  if (!Array.isArray(ids) || ids.length === 0) return []
+
+  const { error } = await supabase
+    .from('emotion_records')
+    .delete()
+    .eq('user_id', userId)
+    .in('id', ids)
+
+  if (error) throw error
+  return ids
 }

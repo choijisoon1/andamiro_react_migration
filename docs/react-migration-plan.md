@@ -167,7 +167,7 @@ src/stores/exchange.js
 | `src/views/exchange/RoomView.vue` | 대상 없음 | 없음 | 실제 이동 경로와 기능이 없는 임시 화면으로 확인, 최종 Vue 정리 단계에서 삭제 예정 |
 | `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` | 기존 `src/assets/scss/_my.scss` 재사용 | 완료 |
 | `src/views/my/ProfileView.vue` | `src/views/my/ProfileView.jsx` | `src/views/my/ProfileView.scss` 및 기존 `ProfileForm.scss` 재사용 | 완료 |
-| `src/views/my/DataBack.vue` | `src/views/my/DataBack.jsx` 예정 | 기존 `_layout.scss`, `_my.scss` 검토 | 미완료 |
+| `src/views/my/DataBack.vue` | `src/views/my/DataBack.jsx` | 기존 `_layout.scss`, `_button.scss` 재사용 및 `DataBack.scss` | 완료 |
 | `src/views/my/ChatViewView.vue` | `src/views/my/ChatViewView.jsx` 예정 | 기존 `_my.scss` 및 Gauge 스타일 검토 | 미완료 |
 | `src/views/my/ChatListView.vue` | 대상 확인 후 제거 또는 React 작성 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
 
@@ -219,7 +219,7 @@ src/stores/exchange.js
 
 ## 6. 현재 React 이관 범위
 
-실제 사용자 라우트 기준 총 19개 동작 지점 중 17개가 React 구현에 연결됐다. 단순 라우트 개수 기준 약 89%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+실제 사용자 라우트 기준 총 19개 동작 지점 중 18개가 React 구현에 연결됐다. 단순 라우트 개수 기준 약 95%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -238,7 +238,7 @@ src/stores/exchange.js
 | `/exchange/join` | 비로그인 안내·초대 미리보기·비밀번호·참여 | React 완료 |
 | `/exchange/room` | 기능 없는 Vue 임시 화면 | React 라우트 제거, 최종 정리 때 Vue 파일 삭제 |
 | `/my` | 마이페이지·프로필·통계·푸시·계정 관리 | React 완료 |
-| `/my/databack` | 내 기록 관리 | 임시 화면 |
+| `/my/databack` | 개인 일기 선택·CSV 백업·삭제 | React 완료 |
 | `/my/chat-view` | 저장된 일기 상세 | 임시 화면 |
 
 `/my/profile`은 기존과 동일하게 `/my`로 이동하는 redirect다.
@@ -317,13 +317,13 @@ src/views/my/DataBack.vue
 src/views/my/ChatViewView.vue
 ```
 
-남은 기능:
+마이 영역 기능:
 
 - 프로필 조회·수정과 기존 `ProfileForm.jsx` 재사용
 - 일기 통계와 교환일기 개수
 - 푸시 알림 구독·해제
 - 로그아웃과 회원 탈퇴 Edge Function
-- 내 기록 목록·선택·복원
+- [x] 내 기록 목록·선택·CSV 백업·삭제
 - 저장된 일기 상세와 감정 게이지
 
 ### 남은 공통 컴포넌트
@@ -373,8 +373,9 @@ src/views/my/ChatViewView.vue
 1. [x] 마이 메인과 프로필 수정
 2. [x] 일기·교환일기 통계
 3. [x] 푸시 구독 코드 이관, 지원·거부 환경 수동 검증은 최종 단계에서 수행
-4. 내 기록 목록과 상세
-5. [x] 로그아웃·회원 탈퇴 코드 이관, 실제 계정 탈퇴는 최종 통합 검증에서 수행
+4. [x] 내 기록 목록·선택·CSV 백업·삭제
+5. 저장된 일기 상세
+6. [x] 로그아웃·회원 탈퇴 코드 이관, 실제 계정 탈퇴는 최종 통합 검증에서 수행
 
 완료 조건은 프로필 변경, 일기 상세, 푸시 지원·미지원 브라우저, 탈퇴 후 세션 정리가 정상인 것이다.
 
@@ -469,10 +470,10 @@ eslint-plugin-vue
 
 ## 12. 바로 다음 작업
 
-다음 작업은 `src/views/my/DataBack.vue`를 `src/views/my/DataBack.jsx`로 이관하는 것이다.
+다음 작업은 `src/views/my/ChatViewView.vue`를 기준으로 `/my/chat-view`의 저장된 개인 일기 상세 화면을 React로 이관하는 것이다.
 
-- 개인일기 목록 조회와 선택 상태를 분리한다.
-- 서버 데이터 조회·삭제는 `diaryApi.js`와 `diaryQueries.js`에 추가하고 TanStack Query로 관리한다.
-- 선택한 기록의 CSV 내보내기와 전체 선택 동작을 기존 Vue와 동일하게 유지한다.
-- 기존 `_layout.scss`, `_my.scss`의 px, 간격, 색상과 이미지를 그대로 재사용한다.
-- `/my/databack` 검증 후 `ChatViewView.vue`의 저장된 일기 상세 화면을 이관한다.
+- URL의 `id` 또는 `date`로 개인 일기를 조회하는 순서를 유지한다.
+- 저장된 `result` JSON과 일반 문자열 fallback을 Vue와 동일하게 해석한다.
+- 감정 점수, 게이지, 지표, 채팅 요약 표시 조건을 유지한다.
+- 기존 결과 화면의 `SvgGauge.jsx`와 SCSS를 재사용하되 Vue의 크기·색상·애니메이션 값을 바꾸지 않는다.
+- 이 화면이 완료되면 모든 사용자 라우트에서 `MigrationPlaceholder`를 제거한다.

@@ -1,0 +1,10 @@
+// 기존 DataBack.vue의 scoped 스타일만 수치 변경 없이 React 화면으로 분리했다.
+.databack-page {
+  background: #fff;
+}
+
+.databack-more {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}

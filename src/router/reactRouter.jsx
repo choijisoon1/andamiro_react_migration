@@ -19,6 +19,7 @@ import JoinStep3View from '@/views/login/JoinStep3View'
 import JoinStep4View from '@/views/login/JoinStep4View'
 import LoginView from '@/views/login/LoginView'
 import MainView from '@/views/main/MainView'
+import DataBack from '@/views/my/DataBack'
 import MyView from '@/views/my/MyView'
 import ReportView from '@/views/report/ReportView'
 
@@ -82,7 +83,6 @@ function JoinRoute() {
 }
 
 const protectedRoutes = [
-  ['/my/databack', '/my/databack'],
   ['/my/chat-view', '/my/chat-view'],
 ]
 
@@ -114,6 +114,7 @@ const router = createBrowserRouter([
           { path: 'exchange/write', element: <WriteView /> },
           { path: 'exchange/view/:id', element: <DetailView /> },
           { path: 'my', element: <MyView /> },
+          { path: 'my/databack', element: <DataBack /> },
           ...protectedRoutes.map(([path, labelPath]) => ({
             path: path.slice(1),
             element: <MigrationPlaceholder path={labelPath} />,

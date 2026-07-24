@@ -44,9 +44,7 @@ Pinia diary/exchange
 - React 진입점은 `src/main.jsx`이며 `QueryClientProvider`와 React Router를 사용한다.
 - React 라우터에서 실행 중인 화면은 `.vue` 파일을 import하지 않는다.
 - Vue 진입점 `src/main.js`, Vue Router, Pinia 저장소와 `.vue` 파일은 아직 비교 기준으로 남아 있다.
-- React 사용자 경로 19개 중 17개가 React 화면이며, 아래 2개만 임시 화면이다.
-  - `/my/databack`
-  - `/my/chat-view`
+- React 사용자 경로 19개 중 18개가 React 화면이며, `/my/chat-view`만 임시 화면이다.
 - `/exchange/room`은 Vue에서도 기능이 없는 임시 화면이므로 React 라우트에서 제거된 상태다.
 
 ## 3. 영역별 대조 결과
@@ -68,6 +66,7 @@ Pinia diary/exchange
 | 초대 참여 | `JoinView.vue` | `JoinView.jsx` | Zustand auth + Query invitation | 비로그인 OAuth, 웹뷰 경고, 미리보기, 비밀번호 참여 흐름 일치 |
 | 마이 | `MyView.vue` | `MyView.jsx` | Zustand auth + Query 통계 | 프로필, 개인/공유 통계, 푸시, 로그아웃, 회원탈퇴 흐름 일치 |
 | 프로필 편집 | `ProfileView.vue` | `ProfileView.jsx` | Zustand auth | 조회, 입력 검증, 갱신, 완료 모달 일치 |
+| 데이터 백업 | `DataBack.vue` | `DataBack.jsx` | Query 개인 일기 + 화면 로컬 선택 상태 | 최신순 조회, 15개씩 더보기, 전체선택, CSV, 선택 삭제 흐름 일치 |
 
 ## 4. 이번 대조에서 발견해 수정한 차이
 
@@ -155,14 +154,12 @@ Vue의 Pinia 배열을 Query 캐시로 바꿨지만 Supabase 테이블, 필터, 
 
 ## 8. 다음 작업
 
-소스 대조에서 확인된 차이를 먼저 수정했으므로 다음 화면은 `DataBack.vue`를 기준으로 `/my/databack`을 React로 이관한다.
+`DataBack.vue`의 전체 조회·선택·CSV 백업·삭제 이관을 완료했다. 다음 화면은 마지막 임시 경로인 `/my/chat-view`다.
 
-1. Vue의 개인 일기 목록 조회·선택·전체 선택 동작을 그대로 분석한다.
-2. 필요한 조회·삭제 기능을 `diaryApi.js`와 `diaryQueries.js`에 추가한다.
-3. 선택 체크 상태는 화면 로컬 상태로 둔다.
-4. CSV 내보내기 형식과 파일명은 Vue 원본과 동일하게 유지한다.
-5. `_layout.scss`, `_my.scss`를 우선 재사용하고 임의의 스타일 수치를 추가하지 않는다.
-6. 이관 후 `/my/databack`을 실제 React 화면으로 연결한다.
-7. 마지막 남은 `/my/chat-view`를 같은 방식으로 이관한다.
+1. `ChatViewView.vue`의 URL `id`·`date` 해석 순서를 유지한다.
+2. 기존 `useDiaryByIdQuery`, `useDiaryByDateQuery`를 재사용한다.
+3. 저장된 분석 결과의 JSON·일반 문자열 fallback을 동일하게 구현한다.
+4. 감정 게이지의 크기·색상·1.2초 애니메이션을 유지한다.
+5. 완료 후 `MigrationPlaceholder.jsx`를 제거할 수 있는지 전체 라우트를 검사한다.
 
 전체 파일별 변환 경로와 최종 Vue·Pinia 제거 순서는 [React 이관 현황 및 완료 계획](./react-migration-plan.md)에 계속 누적한다.
