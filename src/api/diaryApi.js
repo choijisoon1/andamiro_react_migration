@@ -1,3 +1,4 @@
+import { formatLocalDate } from '@/lib/date'
 import { supabase } from '@/lib/supabase'
 
 // React 상태와 분리한 순수 Supabase 호출 모듈이다.
@@ -110,7 +111,7 @@ export async function fetchDiaryStats({ userId }) {
 export async function saveDiary({ userId, payload }) {
   requireUserId(userId)
   const { emotion, content, summary, chat_messages: chatMessages } = payload
-  const date = payload.date ?? new Date().toISOString().split('T')[0]
+  const date = payload.date ?? formatLocalDate()
 
   // 요청은 계속 처리하면서 UI에만 실패를 알리던 타임아웃을 제거해 재시도 중복 저장을 막는다.
   const { data, error } = await supabase

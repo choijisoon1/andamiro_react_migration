@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import AppTabBar from '@/components/layout/AppTabBar'
 import ModalBottom from '@/components/layout/ModalBottom'
 import PageLayout from '@/components/layout/PageLayout'
+import { formatLocalDate } from '@/lib/date'
 import { useDiariesByMonthQuery } from '@/queries/diaryQueries'
 import { useAuthStore } from '@/stores/authStore'
 import { useChatStore } from '@/stores/chatStore'
@@ -59,7 +60,7 @@ function MainView() {
   const yearMonth = `${year}-${String(month + 1).padStart(2, '0')}`
   const monthLabel = `${year}.${String(month + 1).padStart(2, '0')}`
   const nickname = profile?.nickname ?? userEmail?.split('@')[0] ?? '사용자'
-  const todayString = dateString(today.getFullYear(), today.getMonth(), today.getDate())
+  const todayString = formatLocalDate(today)
 
   const {
     data: diaries = [],

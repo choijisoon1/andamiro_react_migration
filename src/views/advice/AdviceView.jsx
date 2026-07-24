@@ -5,6 +5,7 @@ import AppTabBar from '@/components/layout/AppTabBar'
 import ModalFull from '@/components/layout/ModalFull'
 import PageLayout from '@/components/layout/PageLayout'
 import { useAdviceEnricher } from '@/composables/useAdviceEnricher'
+import { formatLocalDate } from '@/lib/date'
 import {
   useDiaryByDateQuery,
   useUpdateDiaryResultMutation,
@@ -45,7 +46,7 @@ function adviceTipTitle(title) {
 
 function AdviceView() {
   const [today] = useState(() => new Date())
-  const todayString = today.toISOString().split('T')[0]
+  const todayString = formatLocalDate(today)
   const { data: diaryRecord = null } = useDiaryByDateQuery(todayString)
   const updateDiaryResult = useUpdateDiaryResultMutation()
   const { enrich } = useAdviceEnricher()

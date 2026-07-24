@@ -90,7 +90,9 @@ Do not put the Vercel app URL here unless Google/Supabase documentation for the 
 - [ ] Attach an image in chat and confirm AI response.
 - [ ] Finish the diary and confirm `/chat/result` analysis appears.
 - [ ] Save the diary and confirm the record appears on `/main`.
+- [ ] In the `Asia/Seoul` time zone, confirm the saved `record_date` matches the user's local calendar date.
 - [ ] Open `/advice` and confirm today's advice screen works.
+- [ ] Confirm `/advice` reads the same local-date record that was saved from `/chat/result`.
 - [ ] Open `/report` and confirm report data renders.
 - [ ] Create an exchange diary in `/exchange/write`.
 - [ ] Open the exchange diary detail page.

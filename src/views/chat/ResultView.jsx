@@ -7,6 +7,7 @@ import FooterCtp from '@/components/layout/FooterCtp'
 import ModalBottom from '@/components/layout/ModalBottom'
 import PageLayout from '@/components/layout/PageLayout'
 import { useAnalysisAgent } from '@/composables/useAnalysisAgent'
+import { formatLocalDate } from '@/lib/date'
 import { useSaveDiaryMutation } from '@/queries/diaryQueries'
 import { useChatStore } from '@/stores/chatStore'
 
@@ -71,7 +72,7 @@ function ResultView() {
   const innerFrameRef = useRef(null)
   const scoreFrameRef = useRef(null)
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = formatLocalDate()
   const date = recordDate ?? today
   const gaugeColors = GAUGE_COLORS[emotion] ?? GAUGE_COLORS.normal
   const title = analysis?.mood ?? ''
