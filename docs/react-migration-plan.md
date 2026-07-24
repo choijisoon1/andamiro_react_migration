@@ -161,9 +161,9 @@ src/stores/exchange.js
 | `src/views/exchange/WriteView.vue` | `src/views/exchange/WriteView.jsx` | `src/views/exchange/WriteView.scss` 및 기존 `_form.scss`, `_layout.scss` 재사용 | 완료 |
 | `src/views/exchange/DetailView.vue` | `src/views/exchange/DetailView.jsx` | `src/views/exchange/DetailView.scss` 및 기존 `_layout.scss` 재사용 | 완료 |
 | `src/views/exchange/JoinView.vue` | `src/views/exchange/JoinView.jsx` | `src/views/exchange/JoinView.scss` | 완료 |
-| `src/views/exchange/RoomView.vue` | 요구사항 확인 후 `RoomView.jsx` 또는 제거 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
-| `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` 예정 | 기존 `src/assets/scss/_my.scss` 검토 | 미완료 |
-| `src/views/my/ProfileView.vue` | `src/views/my/ProfileView.jsx` 예정 | 기존 `ProfileForm.scss` 재사용 검토 | 미완료 |
+| `src/views/exchange/RoomView.vue` | 대상 없음 | 없음 | 실제 이동 경로와 기능이 없는 임시 화면으로 확인, 최종 Vue 정리 단계에서 삭제 예정 |
+| `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` | 기존 `src/assets/scss/_my.scss` 재사용 | 완료 |
+| `src/views/my/ProfileView.vue` | `src/views/my/ProfileView.jsx` | `src/views/my/ProfileView.scss` 및 기존 `ProfileForm.scss` 재사용 | 완료 |
 | `src/views/my/DataBack.vue` | `src/views/my/DataBack.jsx` 예정 | 기존 `_layout.scss`, `_my.scss` 검토 | 미완료 |
 | `src/views/my/ChatViewView.vue` | `src/views/my/ChatViewView.jsx` 예정 | 기존 `_my.scss` 및 Gauge 스타일 검토 | 미완료 |
 | `src/views/my/ChatListView.vue` | 대상 확인 후 제거 또는 React 작성 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
@@ -216,7 +216,7 @@ src/stores/exchange.js
 
 ## 6. 현재 React 이관 범위
 
-라우트 기준 총 20개 동작 지점 중 16개가 React 구현에 연결됐다. 단순 라우트 개수 기준 80%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+실제 사용자 라우트 기준 총 19개 동작 지점 중 17개가 React 구현에 연결됐다. 단순 라우트 개수 기준 약 89%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -233,8 +233,8 @@ src/stores/exchange.js
 | `/exchange/write` | 교환일기 작성·이미지 업로드·AI 요약 반영 | React 완료 |
 | `/exchange/view/:id` | 교환일기 상세·댓글·공유·삭제 | React 완료 |
 | `/exchange/join` | 비로그인 안내·초대 미리보기·비밀번호·참여 | React 완료 |
-| `/exchange/room` | 교환일기 방 | 임시 화면 |
-| `/my` | 마이페이지 | 임시 화면 |
+| `/exchange/room` | 기능 없는 Vue 임시 화면 | React 라우트 제거, 최종 정리 때 Vue 파일 삭제 |
+| `/my` | 마이페이지·프로필·통계·푸시·계정 관리 | React 완료 |
 | `/my/databack` | 내 기록 관리 | 임시 화면 |
 | `/my/chat-view` | 저장된 일기 상세 | 임시 화면 |
 
@@ -289,10 +289,10 @@ src/queries/exchangeQueries.js
 이관 순서:
 
 1. `/exchange` 목록·탭·로딩·빈 상태 — 완료
-2. `/exchange/write` 작성·이미지 업로드·AI 결과 전달
-3. `/exchange/view/:id` 상세·초대·댓글·삭제
-4. `/exchange/join` 초대 미리보기·비밀번호·참여
-5. `/exchange/room` 기존 구현과 실제 요구사항 확인 후 처리
+2. `/exchange/write` 작성·이미지 업로드·AI 결과 전달 — 완료
+3. `/exchange/view/:id` 상세·초대·댓글·삭제 — 완료
+4. `/exchange/join` 초대 미리보기·비밀번호·참여 — 완료
+5. `/exchange/room` 사용 여부 확인 — 미사용 임시 화면으로 확정하고 React 라우트 제거 완료
 
 검증할 중요 기능:
 
@@ -330,7 +330,7 @@ src/views/my/ChatViewView.vue
 - `FooterDouble.vue`
 - 일기 상세용 ECharts Gauge 지원
 
-`HelloWorld.vue`, `counter.js`, `ChatListView.vue`, `RoomView.vue`처럼 예제이거나 내용이 거의 없는 파일은 마지막에 사용 여부와 요구사항을 확인하고 정리한다.
+`RoomView.vue`는 미사용 임시 화면으로 확정했다. `HelloWorld.vue`, `counter.js`, `ChatListView.vue`처럼 예제이거나 내용이 거의 없는 나머지 파일도 마지막에 사용 여부와 요구사항을 확인하고 정리한다.
 
 ## 8. 완료까지의 권장 순서
 
@@ -367,11 +367,11 @@ src/views/my/ChatViewView.vue
 
 ### 단계 D — 마이페이지
 
-1. 마이 메인과 프로필 수정
-2. 일기·교환일기 통계
-3. 푸시 구독
+1. [x] 마이 메인과 프로필 수정
+2. [x] 일기·교환일기 통계
+3. [x] 푸시 구독 코드 이관, 지원·거부 환경 수동 검증은 최종 단계에서 수행
 4. 내 기록 목록과 상세
-5. 로그아웃·회원 탈퇴
+5. [x] 로그아웃·회원 탈퇴 코드 이관, 실제 계정 탈퇴는 최종 통합 검증에서 수행
 
 완료 조건은 프로필 변경, 일기 상세, 푸시 지원·미지원 브라우저, 탈퇴 후 세션 정리가 정상인 것이다.
 
@@ -466,9 +466,10 @@ eslint-plugin-vue
 
 ## 12. 바로 다음 작업
 
-다음 작업은 `src/views/exchange/RoomView.vue`와 `/exchange/room` 경로의 필요 여부를 확정하는 것이다.
+다음 작업은 `src/views/my/DataBack.vue`를 `src/views/my/DataBack.jsx`로 이관하는 것이다.
 
-- 현재 `RoomView.vue`는 제목과 메인 이동 링크만 있는 임시 예제 화면이다.
-- 실제 코드에서 `/exchange/room`으로 이동하는 곳도 없다.
-- 별도 방 화면 요구사항이 없다면 React 파일을 만들지 않고 라우트와 원본 파일을 최종 정리 대상에 포함한다.
-- 확인 후 마이페이지 `MyView.vue` 이관으로 이동한다.
+- 개인일기 목록 조회와 선택 상태를 분리한다.
+- 서버 데이터 조회·삭제는 `diaryApi.js`와 `diaryQueries.js`에 추가하고 TanStack Query로 관리한다.
+- 선택한 기록의 CSV 내보내기와 전체 선택 동작을 기존 Vue와 동일하게 유지한다.
+- 기존 `_layout.scss`, `_my.scss`의 px, 간격, 색상과 이미지를 그대로 재사용한다.
+- `/my/databack` 검증 후 `ChatViewView.vue`의 저장된 일기 상세 화면을 이관한다.

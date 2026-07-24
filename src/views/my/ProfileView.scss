@@ -1,0 +1,26 @@
+// 기존 ProfileView.vue의 scoped 스타일 수치를 변경하지 않고 React 화면 전용으로 분리했다.
+.profile-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  background: $white;
+}
+
+.profile-edit-page__main {
+  padding: 24px 20px;
+}
+
+.profile-edit-page__status,
+.profile-edit-page__error {
+  font-size: $font14;
+  text-align: center;
+}
+
+.profile-edit-page__status {
+  color: $text-sub;
+}
+
+.profile-edit-page__error {
+  margin-top: 16px;
+  color: #dc2626;
+}

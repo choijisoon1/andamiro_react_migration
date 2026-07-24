@@ -47,7 +47,7 @@ src/
     │   └── ResultView.vue      # AI 분석 결과 + 저장
     ├── exchange/
     │   ├── ExchangeView.vue    # 감정 교환 목록
-    │   └── RoomView.vue        # 1:1 채팅방
+    │   └── RoomView.vue        # 미사용 임시 화면, React 이관 제외
     ├── my/
     │   ├── MyView.vue          # 마이페이지
     │   ├── ChatListView.vue    # 저장된 일기 목록
@@ -98,7 +98,7 @@ src/
 
 ### PageLayout — 뒤로가기 있는 서브페이지
 
-`/chat`, `/my/chat-view`, `/exchange/room` 등 탭바 없이 헤더에 뒤로가기가 있는 화면에 사용.
+`/chat`, `/my/chat-view` 등 탭바 없이 헤더에 뒤로가기가 있는 화면에 사용.
 
 ```vue
 <PageLayout title="오늘의 기록" back-to="/main" action-label="완료" @action="handleSave">
@@ -239,7 +239,7 @@ const { diaries, fetchByMonth, getByDate, save } = useDiaryStore()
 - [ ] `ChatView` / `EmotionView` / `ResultView`
 - [ ] `ReportView` / `AdviceView`
 - [ ] `MyView` / `ChatListView`
-- [ ] `ExchangeView` / `RoomView`
+- [ ] `ExchangeView` (`RoomView`는 미사용 임시 화면으로 React 이관 제외)
 
 ## 개발 순서 (우선순위)
 
@@ -249,7 +249,7 @@ const { diaries, fetchByMonth, getByDate, save } = useDiaryStore()
 4. **Phase 4** — `ReportView` (달력 + 감정 통계)
 5. **Phase 5** — `AdviceView` (AI 조언)
 6. **Phase 6** — `MyView` / `ChatListView` (`ChatViewView`는 캘린더→상세 열람 경로로 선구현)
-7. **Phase 7** — `ExchangeView` / `RoomView` (Supabase Realtime)
+7. **Phase 7** — `ExchangeView` (Supabase 공유일기, `RoomView`는 미사용으로 제외)
 
 ## 주의사항
 

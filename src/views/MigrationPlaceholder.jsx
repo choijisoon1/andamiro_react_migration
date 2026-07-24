@@ -13,7 +13,6 @@ const TITLES = {
   '/exchange': '교환일기',
   '/exchange/write': '교환일기 작성',
   '/exchange/join': '교환일기 참여',
-  '/exchange/room': '교환일기 방',
   '/my': '마이페이지',
   '/my/databack': '데이터 백업',
   '/my/chat-view': '일기 분석',
