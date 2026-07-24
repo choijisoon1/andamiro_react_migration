@@ -1,7 +1,10 @@
 # Vue → React 이관 현황 및 완료 계획
 
-> 마지막 갱신: 2026-07-23
+> 마지막 갱신: 2026-07-24
 > 대상: `C:\xampp\htdocs\andamiro_react_migration`의 `main` 브랜치
+
+Vue 원본과 현재 React 구현을 UI·동작·상태관리 기준으로 다시 대조한 결과는
+[Vue 원본 기준 React 이관 대조 점검](./vue-react-parity-audit.md)에 기록한다.
 
 ## 1. 목적과 최종 목표
 
@@ -187,7 +190,7 @@ src/stores/exchange.js
 | `src/components/layout/modalBottom.vue` | `src/components/layout/ModalBottom.jsx` + `ModalBottom.scss` | 완료 |
 | `src/components/layout/modalFull.vue` | `src/components/layout/ModalFull.jsx` + `ModalFull.scss` | 완료 |
 | `src/components/layout/TabMenu.vue` | `src/components/layout/TabMenu.jsx` + `TabMenu.scss` | 완료 |
-| `src/views/my/ProfileForm.vue` | `src/views/my/ProfileForm.jsx` + `ProfileForm.scss` | 완료, 프로필 화면에서 재사용 예정 |
+| `src/views/my/ProfileForm.vue` | `src/views/my/ProfileForm.jsx` + `ProfileForm.scss` | 완료, `ProfileView.jsx`에서 사용 중 |
 | `vue-echarts`의 `VChart` 사용 부분 | `src/components/common/EChart.jsx` | Bar Chart 완료, Gauge 지원은 추후 추가 |
 | `src/components/layout/FooterDouble.vue` | React 파일 예정 | 실제 사용 화면 이관 시 처리 |
 | `src/components/layout/AppLayout.vue` | 대상 확인 후 제거 또는 React 작성 | 현재 실제 라우트에서 사용하지 않음 |
@@ -353,7 +356,7 @@ src/views/my/ChatViewView.vue
 
 완료 조건은 Pinia 없이 로그인 사용자별 목록을 조회하고 캐시를 분리하는 것이다.
 
-### 단계 C — 교환일기 작성·상세·참여 (진행 중)
+### 단계 C — 교환일기 작성·상세·참여 (React 구현 완료, 통합 검증 예정)
 
 1. [x] 작성 및 이미지 업로드
 2. [x] 분석 결과 화면에서 전달한 AI 요약 사용

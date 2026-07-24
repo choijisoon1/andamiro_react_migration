@@ -327,7 +327,14 @@
   white-space: nowrap;
   z-index: 2000;
   pointer-events: none;
-  animation: detail-toast-enter 0.25s ease;
+
+  &.is-entering {
+    animation: detail-toast-enter 0.25s ease;
+  }
+
+  &.is-leaving {
+    animation: detail-toast-leave 0.25s ease forwards;
+  }
 }
 
 .detail-more-actions {
@@ -408,5 +415,15 @@
 
   to {
     opacity: 1;
+  }
+}
+
+@keyframes detail-toast-leave {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
   }
 }

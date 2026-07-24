@@ -32,6 +32,7 @@ function MyView() {
   const [deletingAccount, setDeletingAccount] = useState(false)
   const [showProfileEditor, setShowProfileEditor] = useState(false)
   const [modal, setModal] = useState(null)
+  const [modalOpen, setModalOpen] = useState(false)
 
   const nickname = profile?.nickname ?? user?.email?.split('@')[0] ?? '친구'
   const email = user?.email ?? ''
@@ -40,17 +41,18 @@ function MyView() {
 
   function openModal(options = {}) {
     setModal(options)
+    setModalOpen(true)
   }
 
   function closeModal() {
     const onClose = modal?.onClose
-    setModal(null)
+    setModalOpen(false)
     onClose?.()
   }
 
   function confirmModal() {
     const onConfirm = modal?.onConfirm
-    setModal(null)
+    setModalOpen(false)
     onConfirm?.()
   }
 
@@ -181,7 +183,6 @@ function MyView() {
     openModal({
       title: '회원탈퇴 시 모든 기록이 삭제됩니다',
       description: '삭제된 기록은 복구할 수 없어요. 정말 탈퇴할까요?',
-      cancelLabel: '취소',
       btnLabel: '탈퇴하기',
       onConfirm: handleDeleteAccount,
     })
@@ -343,7 +344,7 @@ function MyView() {
       )}
 
       <ModalBottom
-        show={Boolean(modal)}
+        show={modalOpen}
         icon={modal?.icon}
         title={modal?.title}
         description={modal?.description}

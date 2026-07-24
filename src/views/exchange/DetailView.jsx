@@ -31,6 +31,30 @@ function timeAgo(dateValue) {
   return `${Math.floor(hours / 24)}일 전`
 }
 
+function DetailCopyToast({ show }) {
+  const [presence, setPresence] = useState({ show, leaving: false })
+
+  if (presence.show !== show) {
+    // Vue Transition의 0.25초 페이드아웃 뒤에만 토스트를 제거한다.
+    setPresence({ show, leaving: !show })
+  }
+
+  if (!show && !presence.leaving) return null
+
+  return (
+    <div
+      className={`detail-toast ${show ? 'is-entering' : 'is-leaving'}`}
+      onAnimationEnd={(event) => {
+        if (!show && event.target === event.currentTarget) {
+          setPresence({ show: false, leaving: false })
+        }
+      }}
+    >
+      복사되었습니다.
+    </div>
+  )
+}
+
 function DetailView() {
   const { id = '' } = useParams()
   const routeLocation = useLocation()
@@ -515,9 +539,7 @@ function DetailView() {
         )}
       />
 
-      {copyToast && (
-        <div className="detail-toast">복사되었습니다.</div>
-      )}
+      <DetailCopyToast show={copyToast} />
     </>
   )
 }

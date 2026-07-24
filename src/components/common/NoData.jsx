@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import './NoData.scss'
 
 function NoData({
-  title = '당신의 하루를 들려주길\n기다리고 있어요',
+  title = '당신의 하루를 들려주길\n기다리고 있어요!',
   description = '작은 기록이 모여 당신의 마음 지도가 완성돼요.',
   buttonLabel = '',
   buttonTo = '/chat',

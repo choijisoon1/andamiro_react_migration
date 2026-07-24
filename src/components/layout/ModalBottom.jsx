@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import './ModalBottom.scss'
@@ -18,6 +18,12 @@ function ModalBottom({
 }) {
   const titleId = useId()
   const descriptionId = useId()
+  const [presence, setPresence] = useState({ show, leaving: false })
+
+  if (presence.show !== show) {
+    // Vue Transition처럼 show=false가 된 한 프레임 뒤까지 Portal을 유지한다.
+    setPresence({ show, leaving: !show })
+  }
 
   useEffect(() => {
     if (!show) return undefined
@@ -30,11 +36,16 @@ function ModalBottom({
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [onClose, show])
 
-  if (!show) return null
+  if (!show && !presence.leaving) return null
 
   return createPortal(
     <div
-      className="modal-overlay"
+      className={`modal-overlay ${show ? 'is-entering' : 'is-leaving'}`}
+      onAnimationEnd={(event) => {
+        if (!show && event.target === event.currentTarget) {
+          setPresence({ show: false, leaving: false })
+        }
+      }}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose?.()
       }}

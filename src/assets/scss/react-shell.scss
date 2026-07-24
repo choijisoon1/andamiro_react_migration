@@ -1,3 +1,17 @@
+.app-loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $white;
+}
+
+.app-loading__inner img {
+  width: 200px;
+  height: auto;
+}
+
 .wrap.splash {
   height: 100dvh;
   background: $white;
@@ -39,6 +53,15 @@
   border-radius: 14px;
   box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
   transform: translateX(-50%);
+
+  &.is-entering {
+    animation: app-toast-in 0.3s ease;
+  }
+
+  &.is-leaving {
+    pointer-events: none;
+    animation: app-toast-out 0.3s ease forwards;
+  }
 }
 
 .app-toast__icon {
@@ -77,4 +100,28 @@
   cursor: pointer;
   background: none;
   border: 0;
+}
+
+@keyframes app-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes app-toast-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
 }

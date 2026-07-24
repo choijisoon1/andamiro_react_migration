@@ -171,9 +171,13 @@ function MainView() {
           <div id="mainCalendarHost" className="calendar-grid__item" aria-label="월별 캘린더">
             <div className="dayflow-cal" role="application" aria-label="월별 달력">
               <div className="dayflow-cal__head">
-                <div className="title-font-20 dayflow-cal__month-label" aria-label="표시 중인 월">
+                <button
+                  type="button"
+                  className="title-font-20 dayflow-cal__month-label"
+                  aria-label="표시 중인 월"
+                >
                   {monthLabel}
-                </div>
+                </button>
                 <div className="dayflow-cal__nav">
                   <button
                     type="button"
@@ -308,7 +312,6 @@ function MainView() {
         show={resumeModalOpen}
         title="오늘 작성중인 기록이 있습니다"
         description="저장하지 않은 기록이 있어요. 이어서 작성할까요?"
-        cancelLabel="취소"
         confirmLabel="작성중인 기록으로 이동"
         onClose={() => setResumeModalOpen(false)}
         onConfirm={() => {

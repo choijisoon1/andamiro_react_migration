@@ -6,6 +6,23 @@
   display: flex;
   align-items: flex-end;
   background: rgb(0 0 0 / 45%);
+
+  &.is-entering {
+    animation: modal-bottom-overlay-in 0.25s ease;
+
+    .modal-bottom {
+      animation: modal-bottom-sheet-in 0.25s ease;
+    }
+  }
+
+  &.is-leaving {
+    pointer-events: none;
+    animation: modal-bottom-overlay-out 0.25s ease forwards;
+
+    .modal-bottom {
+      animation: modal-bottom-sheet-out 0.25s ease forwards;
+    }
+  }
 }
 
 .modal-bottom {
@@ -43,6 +60,26 @@
     font-size: $font18;
     text-align: left;
   }
+}
+
+@keyframes modal-bottom-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-bottom-overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modal-bottom-sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes modal-bottom-sheet-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
 }
 
 .modal-bottom__desc {

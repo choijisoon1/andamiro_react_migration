@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import './ModalFull.scss'
@@ -13,6 +13,12 @@ function ModalFull({
   children,
 }) {
   const titleId = useId()
+  const [presence, setPresence] = useState({ show, leaving: false })
+
+  if (presence.show !== show) {
+    // Vue Transition의 leave 애니메이션이 끝날 때까지 Portal을 유지한다.
+    setPresence({ show, leaving: !show })
+  }
 
   useEffect(() => {
     if (!show) return undefined
@@ -25,10 +31,17 @@ function ModalFull({
     return () => document.removeEventListener('keydown', onKeyDown)
   }, [onClose, show])
 
-  if (!show) return null
+  if (!show && !presence.leaving) return null
 
   return createPortal(
-    <div className="modal-full-overlay">
+    <div
+      className={`modal-full-overlay ${show ? 'is-entering' : 'is-leaving'}`}
+      onAnimationEnd={(event) => {
+        if (!show && event.target === event.currentTarget) {
+          setPresence({ show: false, leaving: false })
+        }
+      }}
+    >
       <div
         className={`modal-full${modalClass ? ` ${modalClass}` : ''}`}
         role="dialog"
