@@ -1,14 +1,23 @@
 # andamiro
 
-기존 Vue 3 앱을 Vite + React로 단계적으로 이관 중인 감정 일기 앱입니다.
+Vite + React로 만든 감정 일기·교환일기 PWA입니다.
 
-진행 범위, 상태관리 원칙, 남은 화면과 완료 기준은
-[Vue → React 이관 현황 및 완료 계획](docs/react-migration-plan.md)에서 관리합니다.
+기존 Vue 3 + Pinia 프로젝트의 사용자 화면 19개를 React로 이관했으며, 현재
+실행 코드와 패키지는 React 전용으로 정리되어 있습니다. 이관 과정과 파일 대응은
+[Vue → React 이관 완료 기록](docs/react-migration-plan.md)에서 확인할 수 있습니다.
+
+## Tech Stack
+
+- React 19 + React Router + Vite
+- Zustand: 인증, 회원가입, 작성 중 채팅 같은 클라이언트 상태
+- TanStack Query: Supabase 개인 일기·교환일기 서버 상태
+- Supabase Auth, Database, Storage, Edge Functions
+- ECharts, face-api.js, Vite PWA
 
 ## Project Setup
 
 ```sh
-npm install
+npm ci
 ```
 
 Node.js는 `package.json`의 `engines` 기준으로 `^20.19.0 || >=22.12.0` 버전이 필요합니다.
@@ -55,6 +64,22 @@ VITE_N8N_WEBHOOK_URL=
 `ANTHROPIC_API_KEY`는 서버 전용 비밀키입니다. 절대 `VITE_` 접두사를 붙이지 마세요.
 
 `VITE_N8N_WEBHOOK_URL`은 현재 비활성 / 추후 사용 예정 값입니다. 값을 넣으면 n8n 채팅 경로가 활성화될 수 있으므로 현재는 비워둡니다.
+
+## State Management
+
+```text
+src/stores/authStore.js, joinStore.js, chatStore.js
+  → 여러 React 화면에서 공유하는 클라이언트 상태
+
+src/api/*.js
+  → Supabase 요청
+
+src/queries/*.js
+  → TanStack Query 조회·mutation·캐시 무효화
+```
+
+Supabase에서 조회한 데이터를 Zustand에 다시 복사하지 않습니다. 서버 데이터는
+TanStack Query 캐시를 단일 기준으로 사용합니다.
 
 ## `/api/chat`
 

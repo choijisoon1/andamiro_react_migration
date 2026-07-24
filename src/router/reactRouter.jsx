@@ -3,6 +3,7 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 /* eslint-disable react-refresh/only-export-components */
 
 import App from '@/App'
+import { safeNotificationTarget } from '@/lib/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import AdviceView from '@/views/advice/AdviceView'
 import ChatView from '@/views/chat/ChatView'
@@ -38,7 +39,7 @@ function LandingRoute() {
   const isNewUser = useAuthStore((state) => state.isNewUser)
   const location = useLocation()
   const params = new URLSearchParams(location.search)
-  const notificationTarget = params.get('notificationTarget')
+  const notificationTarget = safeNotificationTarget(params.get('notificationTarget'))
 
   if (notificationTarget) return <Navigate replace to={notificationTarget} />
   if (!user) return <Navigate replace to="/login" />

@@ -15,7 +15,6 @@ export default defineConfig([
     '**/dist/**',
     '**/dist-ssr/**',
     '**/coverage/**',
-    '**/*.vue',
   ]),
 
   {
@@ -50,21 +49,6 @@ export default defineConfig([
   js.configs.recommended,
   reactHooks.configs.flat.recommended,
   reactRefresh.configs.vite,
-
-  {
-    name: 'legacy-pinia/stores',
-    files: [
-      'src/stores/auth.js',
-      'src/stores/chat.js',
-      'src/stores/counter.js',
-      'src/stores/diary.js',
-      'src/stores/exchange.js',
-      'src/stores/join.js',
-    ],
-    rules: {
-      'react-hooks/rules-of-hooks': 'off',
-    },
-  },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 ])

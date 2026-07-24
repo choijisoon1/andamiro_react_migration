@@ -4,6 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const POST_SELECT =
+  'id, user_id, title, content, image_url, read_count, created_at, exchange_comments(content, created_at)'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -39,7 +41,7 @@ serve(async (req) => {
   const body = await req.json().catch(() => ({})) as { filter?: string }
   const filter = body.filter === 'mine' || body.filter === 'shared' ? body.filter : 'all'
   const userId = authData.user.id
-  const postSelect = '*, exchange_comments(content, created_at)'
+  const postSelect = POST_SELECT
 
   const result: Array<Record<string, unknown>> = []
 

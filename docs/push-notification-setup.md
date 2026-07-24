@@ -150,7 +150,7 @@ await supabase.from('push_subscriptions').upsert({
 })
 ```
 
-### 마이페이지 토글 (MyView.vue)
+### 마이페이지 토글 (`src/views/my/MyView.jsx`)
 - 토글 ON → `subscribe()` 호출 → 알림 허용 팝업
 - 토글 OFF → `unsubscribe()` 호출 → DB에서 삭제
 
@@ -302,7 +302,7 @@ andamiro/
 │   │   └── usePushSubscription.js     # 구독 등록/해제 로직
 │   └── views/
 │       └── my/
-│           └── MyView.vue             # 푸시 알림 토글 UI
+│           └── MyView.jsx             # 푸시 알림 토글 UI
 │
 ├── supabase/
 │   └── functions/

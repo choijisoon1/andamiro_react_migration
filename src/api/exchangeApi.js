@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabase'
 
-const POST_SELECT = '*, exchange_comments(content, created_at)'
+const POST_FIELDS = 'id, user_id, title, content, image_url, read_count, created_at'
+const POST_SELECT = `${POST_FIELDS}, exchange_comments(content, created_at)`
 const POST_SELECT_WITH_OWNER =
-  '*, profiles(id, nickname), exchange_comments(content, created_at)'
+  `${POST_FIELDS}, profiles(id, nickname), exchange_comments(content, created_at)`
 
 function requireUserId(userId) {
   if (!userId) throw new Error('not_authenticated')
@@ -162,7 +163,7 @@ export async function fetchMyExchangeCount({ userId }) {
 export async function fetchExchangePost({ id }) {
   const { data, error } = await supabase
     .from('exchange_posts')
-    .select('*')
+    .select(POST_FIELDS)
     .eq('id', id)
     .single()
 
@@ -213,6 +214,10 @@ export async function createExchangePost({ userId, payload }) {
 
   if (error) {
     throw new Error(await functionErrorMessage(error, '방 생성에 실패했어요.'))
+  }
+
+  if (!data?.room?.id || !data?.invitation_token) {
+    throw new Error('방 생성 응답이 올바르지 않아요.')
   }
 
   return { ...data.room, invitation_token: data.invitation_token }
@@ -280,26 +285,6 @@ export async function joinExchangeByCode({ code }) {
     throw new Error(message)
   }
   return data.post_id
-}
-
-export async function joinExchangeRoom({ userId, postId, password }) {
-  requireUserId(userId)
-  const { data: post, error: fetchError } = await supabase
-    .from('exchange_posts')
-    .select('id, password, user_id')
-    .eq('id', postId)
-    .single()
-
-  if (fetchError || !post) throw new Error('방을 찾을 수 없어요.')
-  if ((post.password ?? '').trim() !== (password ?? '').trim()) return false
-  if (post.user_id === userId) return true
-
-  const { error } = await supabase
-    .from('exchange_members')
-    .upsert({ post_id: postId, user_id: userId }, { onConflict: 'post_id,user_id' })
-
-  if (error) throw error
-  return true
 }
 
 export async function acceptExchangeInvitation({ token, password }) {

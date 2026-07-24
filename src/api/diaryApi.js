@@ -2,8 +2,6 @@ import { supabase } from '@/lib/supabase'
 
 // React 상태와 분리한 순수 Supabase 호출 모듈이다.
 // 동일한 일기 요청을 메인·리포트·조언 화면에서 재사용하기 위해 기존 Pinia에서 분리했다.
-const SAVE_TIMEOUT_MS = 10_000
-
 function requireUserId(userId) {
   if (!userId) throw new Error('not_authenticated')
 }
@@ -21,19 +19,6 @@ function getMonthRange(yearMonth) {
   return {
     from: `${year}-${paddedMonth}-01`,
     to: `${year}-${paddedMonth}-${String(lastDay).padStart(2, '0')}`,
-  }
-}
-
-async function withTimeout(promise, timeoutMs, message) {
-  let timeoutId
-  const timeout = new Promise((_, reject) => {
-    timeoutId = setTimeout(() => reject(new Error(message)), timeoutMs)
-  })
-
-  try {
-    return await Promise.race([promise, timeout])
-  } finally {
-    clearTimeout(timeoutId)
   }
 }
 
@@ -127,7 +112,8 @@ export async function saveDiary({ userId, payload }) {
   const { emotion, content, summary, chat_messages: chatMessages } = payload
   const date = payload.date ?? new Date().toISOString().split('T')[0]
 
-  const insertPromise = supabase
+  // 요청은 계속 처리하면서 UI에만 실패를 알리던 타임아웃을 제거해 재시도 중복 저장을 막는다.
+  const { data, error } = await supabase
     .from('emotion_records')
     .insert({
       user_id: userId,
@@ -139,12 +125,6 @@ export async function saveDiary({ userId, payload }) {
     })
     .select('*')
     .single()
-
-  const { data, error } = await withTimeout(
-    insertPromise,
-    SAVE_TIMEOUT_MS,
-    '저장 시간이 초과됐어요. 네트워크를 확인해 주세요.',
-  )
 
   if (error) throw error
   return data

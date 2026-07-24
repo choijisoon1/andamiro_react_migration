@@ -13,7 +13,6 @@ import {
   fetchExchangePosts,
   fetchMyExchangeCount,
   joinExchangeByCode,
-  joinExchangeRoom,
   regenerateExchangeInvitation,
   sendExchangeCommentPush,
 } from '@/api/exchangeApi'
@@ -146,20 +145,6 @@ export function useJoinExchangeByCodeMutation() {
     mutationFn: (code) => joinExchangeByCode({ code }),
     onSuccess: (postId) => {
       if (postId) invalidateJoinedPosts()
-    },
-  })
-}
-
-export function useJoinExchangeRoomMutation() {
-  const userId = useAuthStore((state) => state.user?.id)
-  const invalidateJoinedPosts = useJoinSuccessInvalidation()
-
-  return useMutation({
-    mutationFn: ({ postId, password }) => (
-      joinExchangeRoom({ userId, postId, password })
-    ),
-    onSuccess: (joined) => {
-      if (joined) invalidateJoinedPosts()
     },
   })
 }

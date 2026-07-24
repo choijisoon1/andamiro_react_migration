@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
+import { safeNotificationTarget } from '@/lib/navigation'
 import { useAuthStore } from '@/stores/authStore'
 import '@/assets/scss/react-shell.scss'
 
@@ -70,7 +71,8 @@ function App() {
   if (loading) return <AppLoadingScreen />
 
   function openToastTarget() {
-    if (toast?.url) navigate(toast.url)
+    const target = safeNotificationTarget(toast?.url)
+    if (target) navigate(target)
     setToastOpen(false)
     window.clearTimeout(toastTimer.current)
   }

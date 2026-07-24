@@ -1,4 +1,6 @@
 // vite-plugin-pwa 필수 참조 (프리캐싱 미사용 - 즉시 활성화 위해)
+import { safeNotificationTarget } from './lib/navigation'
+
 void self.__WB_MANIFEST
 
 self.addEventListener('install', () => self.skipWaiting())
@@ -34,7 +36,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const target = event.notification.data?.url ?? '/exchange'
+  const target = safeNotificationTarget(event.notification.data?.url, '/exchange')
   const targetUrl = new URL(target, self.location.origin).href
   const launchUrl = new URL('/', self.location.origin)
   launchUrl.searchParams.set('notificationTarget', target)

@@ -132,20 +132,18 @@ function ResultView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function saveAndGo(to, state = {}, options = {}) {
+  async function saveAndGo(to, state = {}) {
     setSaving(true)
     setSaveError('')
 
     try {
-      if (options.saveDiary !== false) {
-        await saveDiary.mutateAsync({
-          date,
-          emotion,
-          content,
-          chat_messages: messages,
-          summary: analysisSummary(analysis),
-        })
-      }
+      await saveDiary.mutateAsync({
+        date,
+        emotion,
+        content,
+        chat_messages: messages,
+        summary: analysisSummary(analysis),
+      })
       resetChat()
       navigate(to, { state })
     } catch (error) {
@@ -165,7 +163,6 @@ function ResultView() {
     await saveAndGo(
       '/exchange/write?source=ai',
       { summary: analysis?.summary ?? content },
-      { saveDiary: false },
     )
   }
 

@@ -20,6 +20,18 @@ function json(body: unknown, status = 200) {
   })
 }
 
+function publicRoom(room: Record<string, unknown>) {
+  return {
+    id: room.id,
+    user_id: room.user_id,
+    title: room.title,
+    content: room.content,
+    image_url: room.image_url,
+    read_count: room.read_count,
+    created_at: room.created_at,
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405)
@@ -173,5 +185,5 @@ serve(async (req) => {
     })())
   }
 
-  return json({ room, invitation_token: invitation.token, created })
+  return json({ room: publicRoom(room), invitation_token: invitation.token, created })
 })

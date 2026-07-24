@@ -27,7 +27,7 @@ React에서 달라져도 되는 것은 프레임워크 구현 방식이다.
 | 화면 이동 | Vue Router | React Router |
 | Teleport·Transition | Vue `Teleport`, `Transition` | React Portal + 같은 CSS 애니메이션 |
 
-최종 완료 시 Pinia는 제거된다. 다만 Pinia의 모든 값을 Zustand에 복사하지는 않는다. Supabase가 원본인 데이터까지 Zustand에 중복 보관하면 캐시가 서로 달라질 수 있으므로 TanStack Query가 담당한다.
+최종 정리에서 Pinia는 제거됐다. Pinia의 모든 값을 Zustand에 복사하지 않고, Supabase가 원본인 데이터는 TanStack Query가 담당한다.
 
 ```text
 Pinia auth/join/chat
@@ -43,7 +43,7 @@ Pinia diary/exchange
 
 - React 진입점은 `src/main.jsx`이며 `QueryClientProvider`와 React Router를 사용한다.
 - React 라우터에서 실행 중인 화면은 `.vue` 파일을 import하지 않는다.
-- Vue 진입점 `src/main.js`, Vue Router, Pinia 저장소와 `.vue` 파일은 아직 비교 기준으로 남아 있다.
+- Vue 진입점, Vue Router, Pinia 저장소와 `.vue` 원본은 대조 완료 후 제거했으며 이 문서와 Git 기록이 비교 이력을 보존한다.
 - React 사용자 경로 19개가 모두 React 화면에 연결됐고 `MigrationPlaceholder`는 제거됐다.
 - `/exchange/room`은 Vue에서도 기능이 없는 임시 화면이므로 React 라우트에서 제거된 상태다.
 
@@ -163,6 +163,6 @@ Vue의 Pinia 배열을 Query 캐시로 바꿨지만 Supabase 테이블, 필터, 
 2. 점수가 있는 기록과 점수가 없는 예전 기록의 표시 조건을 각각 확인한다.
 3. 로그인부터 개인 일기 저장·재조회까지 한 흐름으로 확인한다.
 4. 공유일기 초대·댓글, 카메라·마이크·푸시처럼 외부 권한이 필요한 흐름을 확인한다.
-5. 결과가 안정적이면 Vue·Pinia 실행 코드와 전용 패키지를 제거한다.
+5. Vercel 환경변수, Supabase RLS와 Edge Function 권한을 확인한다.
 
-전체 파일별 변환 경로와 최종 Vue·Pinia 제거 순서는 [React 이관 현황 및 완료 계획](./react-migration-plan.md)에 계속 누적한다.
+전체 파일별 변환 경로와 Vue·Pinia 제거 결과는 [React 이관 현황 및 완료 계획](./react-migration-plan.md)에 기록했다.

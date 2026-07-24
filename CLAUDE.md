@@ -1,260 +1,119 @@
-# 안다미로 (DAYFLOW) — Claude Code 가이드
+# 안다미로(DAYFLOW) 개발 가이드
 
 ## 프로젝트 개요
 
-감정 일기 웹앱. 사용자가 오늘의 감정을 선택하고 AI와 대화하며 기록한다.
+사용자가 감정을 선택하고 AI와 대화해 개인 일기를 남기거나 다른 사용자와
+교환일기를 공유하는 PWA다.
 
-- **스택**: Vue 3 (Composition API) + Vite + Pinia + Vue Router 5
-- **백엔드**: Supabase (Auth, DB, Realtime)
-- **AI**: Anthropic Claude API (chatAgent, analysisAgent)
-- **배포**: Vercel (PWA)
-- **폰트**: Pretendard (CDN, font-display: swap)
+- 프런트엔드: React 19, React Router, Vite
+- 클라이언트 상태: Zustand
+- 서버 상태: TanStack Query
+- 백엔드: Supabase Auth, Database, Storage, Edge Functions
+- AI: Anthropic Claude API
+- 부가 기능: ECharts, face-api.js, Service Worker, Web Push
+- 배포: Vercel
 
-## 디렉터리 구조
+Vue, Vue Router, Pinia 코드는 React 이관 완료 후 제거됐다.
 
+## 실행 명령
+
+```sh
+npm ci
+npm run dev
+npm run lint:check
+npm run build
 ```
+
+Node.js는 `package.json`의 `engines`에 맞는 `^20.19.0 || >=22.12.0`을 사용한다.
+
+## 주요 구조
+
+```text
 src/
-├── main.js
-├── App.vue
-├── assets/
-│   └── scss/
-│       ├── main.scss       # 진입점 (@use 순서: tokens → reset → fonts)
-│       ├── _tokens.scss    # 디자인 토큰 (CSS 변수)
-│       ├── _reset.scss     # 전역 리셋 + #app 기본 설정
-│       └── _fonts.scss     # Pretendard @font-face
-├── lib/
-│   └── supabase.js         # createClient (PKCE)
+├── main.jsx                 React 진입점과 QueryClientProvider
+├── App.jsx                  인증 초기화, 스플래시, 알림 토스트
+├── router/reactRouter.jsx   React Router와 인증·회원가입 가드
 ├── stores/
-│   ├── auth.js             # 사용자 인증 (signIn/Up/Out/Kakao)
-│   └── diary.js            # 일기 CRUD (fetchByMonth, getByDate, save)
-├── router/
-│   └── index.js            # 라우트 정의 + 인증 가드
-├── components/
-│   └── layout/
-│       ├── AppLayout.vue   # 메인 앱 레이아웃 (헤더 + 탭바)
-│       ├── AppTabBar.vue   # 하단 탭 (홈/리포트/조언)
-│       └── PageLayout.vue  # 서브페이지 레이아웃 (뒤로가기 헤더)
-└── views/
-    ├── login/
-    │   ├── LoginView.vue
-    │   ├── JoinStep1View.vue   # 이메일·비밀번호
-    │   ├── JoinStep2View.vue   # 닉네임
-    │   ├── JoinStep3View.vue   # 관심 감정 선택
-    │   └── JoinStep4View.vue   # 가입 완료
-    ├── chat/
-    │   ├── ChatView.vue        # 오늘 있었던 일 텍스트 입력
-    │   ├── EmotionView.vue     # 감정 태그 선택
-    │   └── ResultView.vue      # AI 분석 결과 + 저장
-    ├── exchange/
-    │   ├── ExchangeView.vue    # 감정 교환 목록
-    │   └── RoomView.vue        # 미사용 임시 화면, React 이관 제외
-    ├── my/
-    │   ├── MyView.vue          # 마이페이지
-    │   ├── ChatListView.vue    # 저장된 일기 목록
-    │   └── ChatViewView.vue    # 저장된 일기 상세 (ResultView와 유사 UI, 읽기 전용)
-    ├── MainView.vue            # 홈
-    ├── ReportView.vue          # 리포트
-    └── AdviceView.vue          # 조언
+│   ├── authStore.js         사용자·프로필·인증 상태
+│   ├── joinStore.js         회원가입 단계 입력값
+│   └── chatStore.js         감정·작성 날짜·작성 중 대화
+├── api/
+│   ├── diaryApi.js          개인 일기 Supabase 요청
+│   └── exchangeApi.js       교환일기 Supabase 요청
+├── queries/
+│   ├── diaryQueries.js      개인 일기 Query·mutation
+│   └── exchangeQueries.js   교환일기 Query·mutation
+├── components/              공통 JSX 컴포넌트와 전용 SCSS
+├── views/                   라우트별 JSX 화면
+├── assets/scss/             기존 디자인 토큰과 공통 스타일
+└── sw.js                    Service Worker
 ```
 
-## 라우트 구조
+## 상태관리 원칙
 
-| 경로 | 뷰 | 인증 필요 |
-|------|-----|-----------|
-| `/login` | LoginView | — |
-| `/join/1~4` | JoinStep1~4View | — |
-| `/main` | MainView | ✅ |
-| `/chat` | ChatView | ✅ |
-| `/chat/emotion` | EmotionView | ✅ |
-| `/chat/result` | ResultView | ✅ |
-| `/report` | ReportView | ✅ |
-| `/advice` | AdviceView | ✅ |
-| `/exchange` | ExchangeView | ✅ |
-| `/exchange` | DetailView | ✅ |
-| `/my` | MyView | ✅ |
-| `/my/chat-list` | ChatListView | ✅ |
-| `/my/chat-view` | ChatViewView | ✅ (`?date=YYYY-MM-DD` 필수) |
+- 사용자·프로필, 회원가입 입력, 저장 전 채팅처럼 여러 화면에서 공유하는
+  클라이언트 상태만 Zustand에 둔다.
+- Supabase가 원본인 개인 일기와 교환일기는 API 모듈과 TanStack Query에서
+  관리한다.
+- Query 결과를 Zustand에 중복 저장하지 않는다.
+- mutation 성공 후 관련 사용자 Query Key를 무효화하거나 캐시를 갱신한다.
+- 모달, 탭, 입력 포커스처럼 한 화면에서만 쓰는 값은 `useState`로 둔다.
 
-기록 플로우: `/chat` → `/chat/emotion` → `/chat/result`
+## 화면과 라우트
 
-기록 열람: 메인 캘린더에서 날짜·기록 선택 시 `/my/chat-view?date=…` 로 이동해 해당 날짜 저장 분석을 본다.
-
-## 레이아웃 컴포넌트 사용 규칙
-
-### AppLayout — 탭바 있는 메인 앱 화면
-
-`/main`, `/report`, `/advice` 등 탭 네비게이션이 있는 화면에 사용.
-
-```vue
-<AppLayout title="홈" show-logout>
-  <!-- 페이지 본문 -->
-</AppLayout>
+```text
+/login
+/join/1 ~ /join/4
+/main
+/chat/emotion
+/chat
+/chat/result
+/advice
+/report
+/exchange
+/exchange/write
+/exchange/view/:id
+/exchange/join
+/my
+/my/databack
+/my/chat-view?id=...
 ```
 
-| prop | 타입 | 설명 |
-|------|------|------|
-| `title` | String | 헤더 타이틀 (기본값 `''`) |
-| `showLogout` | Boolean | 우측 로그아웃 버튼 표시 여부 |
+`/my/profile`은 기존 동작을 유지하기 위해 `/my`로 redirect한다.
 
-### PageLayout — 뒤로가기 있는 서브페이지
+개인 일기는 `emotion_records`를 사용하며 리포트와 조언의 데이터가 된다.
+교환일기는 별도 데이터이므로 개인 리포트와 조언에 포함하지 않는다.
 
-`/chat`, `/my/chat-view` 등 탭바 없이 헤더에 뒤로가기가 있는 화면에 사용.
+## 코드 작성 규칙
 
-```vue
-<PageLayout title="오늘의 기록" back-to="/main" action-label="완료" @action="handleSave">
-  <!-- 페이지 본문 -->
-  <template #action>
-    <!-- 헤더 우측 슬롯 (복잡한 경우) -->
-  </template>
-</PageLayout>
+- 화면과 컴포넌트는 JavaScript/JSX를 사용하며 임의로 TSX로 전환하지 않는다.
+- 컴포넌트·화면 파일은 PascalCase, 변수와 함수는 camelCase를 사용한다.
+- 기존 UI의 px, 여백, 색상, 이미지, radius, 애니메이션 값을 임의로 바꾸지 않는다.
+- 기존 global SCSS를 우선 재사용하고 화면 전용 스타일은 JSX 옆 `.scss`에 둔다.
+- 구조 변경 이유가 있는 곳에만 짧은 한글 주석을 남긴다.
+- 환경변수나 비밀키를 소스와 Git에 커밋하지 않는다.
+
+## 환경변수
+
+`.env.example`을 기준으로 로컬 `.env.local`을 만든다.
+
+```sh
+VITE_SUPABASE_URL=
+VITE_SUPABASE_KEY=
+ANTHROPIC_API_KEY=
+ALLOWED_ORIGIN=http://localhost:5173
+VITE_VAPID_PUBLIC_KEY=
+VITE_N8N_WEBHOOK_URL=
 ```
 
-| prop | 타입 | 설명 |
-|------|------|------|
-| `title` | String | 헤더 중앙 타이틀 |
-| `backTo` | String | 뒤로가기 대신 특정 경로로 이동 |
-| `actionLabel` | String | 헤더 우측 텍스트 버튼 |
+`ANTHROPIC_API_KEY`는 서버 전용이므로 `VITE_` 접두사를 붙이지 않는다.
+현재 n8n 경로는 비활성이므로 실제 연결 전까지 `VITE_N8N_WEBHOOK_URL`은 비워둔다.
 
-## 네이밍 컨벤션
+## 변경 전 확인 항목
 
-| 대상 | 표기법 | 예시 |
-|------|--------|------|
-| 컴포넌트 파일 | PascalCase | `AppTabBar.vue`, `PageLayout.vue` |
-| 뷰 파일 | PascalCase + View 접미사 | `ChatView.vue`, `JoinStep1View.vue` |
-| `<template>` 컴포넌트 태그 | PascalCase | `<AppLayout>`, `<PageLayout>` |
-| SCSS 파일 (partial) | `_` 접두사 + kebab-case | `_tokens.scss`, `_reset.scss` |
-| CSS class | kebab-case | `page-header`, `tabbar__item` |
-| CSS BEM | `블록__요소--modifier` | `header__logo`, `tabbar__item.is-active` |
-| JS 변수·함수 | camelCase | `handleLogin`, `fetchByMonth` |
-| Pinia store | camelCase 함수명 | `useAuthStore`, `useDiaryStore` |
-| 환경 변수 | VITE_ 접두사 | `VITE_SUPABASE_URL` |
-
-## 디자인 토큰
-
-`src/assets/scss/_tokens.scss`에 정의. 컴포넌트에서 `var(--token)`으로 참조.
-
-```scss
-/* 색상 */
---primary: #4283f3
---primary-light: #41c7f4
---white: #fff
---border: #dddddd
---title: #222222
---text-default: #454545
---text-sub: #666666
---text-disabled: #999999
---bg-color: #eef3fc
---dim: rgba(0,0,0,0.5)
-
-/* 폰트 */
---font12 ~ --font24  (0.75rem ~ 1.5rem)
-
-/* 레이아웃 */
---header-height: 58px
---tabbar-height: 64px
-```
-
-## Pinia Store 구조
-
-### auth.js
-
-```js
-const { user, loading, init, signIn, signUp, signOut, signInWithKakao } = useAuthStore()
-```
-
-- `init()` — 세션 복구 + onAuthStateChange 등록 (router 가드에서 호출)
-- `user` — Supabase User 객체 또는 `null`
-
-### diary.js
-
-```js
-const { diaries, fetchByMonth, getByDate, save } = useDiaryStore()
-```
-
-- `save(payload)` — `{ date, content, emotion, ... }` → `diaries` 테이블 insert
-
-## HTML 골격
-
-모든 레이아웃 컴포넌트의 기본 뼈대:
-
-```html
-<div class="wrap">
-  <div id="headerWrap">
-    <header id="header" class="header">...</header>
-  </div>
-  <div id="bodyWrap">
-    <main>
-      <section class="...">...</section>
-    </main>
-  </div>
-</div>
-```
-
-- `id` — JS 참조용 (`headerWrap`, `bodyWrap`, `header`)
-- `class` — CSS 스타일링 전용 (kebab-case BEM)
-- `AppLayout`은 `AppTabBar`를 `#bodyWrap` 아래에 추가로 포함
-
-## 컴포넌트 작성 패턴
-
-```vue
-<script setup>
-// 1. import
-// 2. props / emits
-// 3. store / router / route
-// 4. reactive state (ref, computed)
-// 5. functions
-// 6. lifecycle (onMounted 등)
-</script>
-
-<template>
-  <!-- 레이아웃 컴포넌트 래핑 → 본문 slot -->
-</template>
-
-<style scoped>
-/* BEM 기반 kebab-case */
-</style>
-```
-
-- `<script setup>` 단독 사용 (Options API 금지)
-- `defineProps` / `defineEmits` 객체 형태로 타입·기본값 명시
-- 스타일은 `scoped`, 전역 토큰은 `var(--token)` 참조
-
-## 개발 현황
-
-### 완료
-
-- [x] 프로젝트 셋업 (Vue 3 + Pinia + Vue Router + Supabase + PWA)
-- [x] 디자인 토큰 (`base.css`)
-- [x] `AppLayout` / `PageLayout` / `AppTabBar`
-- [x] `useAuthStore` (이메일·카카오 로그인)
-- [x] `useDiaryStore` (fetchByMonth / getByDate / save)
-- [x] 라우터 전체 + 인증 가드
-- [x] `LoginView` (기능 동작, 스타일 미완)
-- [x] `MainView` (기본 구조)
-- [x] `ChatViewView` (저장 일기 상세·`getByDate`, ResultView 유사 레이아웃)
-
-### 미완 (껍데기)
-
-- [ ] `JoinStep1~4View`
-- [ ] `ChatView` / `EmotionView` / `ResultView`
-- [ ] `ReportView` / `AdviceView`
-- [ ] `MyView` / `ChatListView`
-- [ ] `ExchangeView` (`RoomView`는 미사용 임시 화면으로 React 이관 제외)
-
-## 개발 순서 (우선순위)
-
-1. **Phase 1** — 진입 플로우: `LoginView` 스타일 정비 + `JoinStep1~4View`
-2. **Phase 2** — 홈 개선: `MainView` (오늘 상태 + 최근 기록 카드)
-3. **Phase 3** — 기록 플로우: `ChatView` → `EmotionView` → `ResultView`
-4. **Phase 4** — `ReportView` (달력 + 감정 통계)
-5. **Phase 5** — `AdviceView` (AI 조언)
-6. **Phase 6** — `MyView` / `ChatListView` (`ChatViewView`는 캘린더→상세 열람 경로로 선구현)
-7. **Phase 7** — `ExchangeView` (Supabase 공유일기, `RoomView`는 미사용으로 제외)
-
-## 주의사항
-
-- `voiceAgent`, `reportAgent`, `adviceAgent`는 명시적 승인 전 구현 금지
-- Claude API 연동은 Phase 3 `ResultView` 이후 별도 승인 후 진행
-- 신규 store는 `src/stores/` 아래, composable은 `src/composables/` 아래 생성
-- Supabase 쿼리는 store에서만 실행 (뷰에서 직접 호출 금지)
-- `AppTabBar` 탭 추가 시 탭바 높이(--tabbar-height) 재검토 필요
+- React Router의 보호·회원가입 가드 순서
+- 개인 일기와 교환일기 테이블·Query Key 구분
+- Supabase 사용자 ID를 포함한 조회·수정 권한
+- 카메라·마이크·푸시 권한 거절 처리
+- PWA와 Vercel `/api/chat` 환경 차이
+- 모바일과 데스크톱에서 기존 UI가 동일한지 여부
