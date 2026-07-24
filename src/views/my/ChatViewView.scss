@@ -1,0 +1,164 @@
+// Vue scoped 스타일의 수치를 그대로 옮기고 이 화면 아래로 범위를 제한한다.
+.saved-diary-view.result-main {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 24px;
+
+  .result-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 80px 0;
+    color: $text-sub;
+    font-size: $font14;
+  }
+
+  .result-loading__dots {
+    display: flex;
+    gap: 6px;
+
+    span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $primary;
+      animation: saved-result-bounce 1.2s infinite ease-in-out;
+
+      &:nth-child(2) { animation-delay: 0.2s; }
+      &:nth-child(3) { animation-delay: 0.4s; }
+    }
+  }
+
+  .text-content { margin-bottom: 8px; }
+
+  .text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .grap-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .grap-group.score-chart {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 240px;
+    height: 168px;
+  }
+
+  .gauge-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    pointer-events: none;
+    transform: translate(-50%, -38%);
+  }
+
+  .gauge-title {
+    font-size: $font14;
+    color: $text-sub;
+  }
+
+  .gauge-score {
+    font-size: 44px;
+    font-weight: $font-eb;
+    line-height: 1;
+    color: $title;
+  }
+
+  .gauge-label {
+    font-size: $font12;
+    font-weight: $font-m;
+    color: $text-disabled;
+    letter-spacing: 0.08em;
+  }
+
+  .grap-group.score-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .score-item__label { color: $text-sub; }
+
+  .score-item__val {
+    font-size: $font16;
+    font-weight: $font-sb;
+    color: $title;
+  }
+
+  .score-item__bar {
+    width: 100%;
+    height: 14px;
+    overflow: hidden;
+    background: #eef3fc;
+    border-radius: 4px;
+  }
+
+  .score-item__fill {
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--saved-gauge-from),
+      var(--saved-gauge-to)
+    );
+    border-radius: 100px;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-item:first-of-type {
+    --card-tips-bg: #FFFCF6;
+    --card-tips-text: #786258;
+  }
+
+  .card-item:nth-of-type(2) h3 span { background-color: #F0F9F1; }
+
+  .icon01::before {
+    background: #ffa014;
+    mask-image: url("/assets/img/result/ico-01.svg");
+    -webkit-mask-image: url("/assets/img/result/ico-01.svg");
+  }
+
+  .icon02::before {
+    background: #7AC47D;
+    mask-image: url("/assets/img/result/ico-02.svg");
+    -webkit-mask-image: url("/assets/img/result/ico-02.svg");
+  }
+}
+
+@keyframes saved-result-bounce {
+  0%,
+  60%,
+  100% {
+    opacity: 0.4;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-6px);
+  }
+}

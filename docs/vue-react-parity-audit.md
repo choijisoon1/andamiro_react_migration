@@ -44,7 +44,7 @@ Pinia diary/exchange
 - React 진입점은 `src/main.jsx`이며 `QueryClientProvider`와 React Router를 사용한다.
 - React 라우터에서 실행 중인 화면은 `.vue` 파일을 import하지 않는다.
 - Vue 진입점 `src/main.js`, Vue Router, Pinia 저장소와 `.vue` 파일은 아직 비교 기준으로 남아 있다.
-- React 사용자 경로 19개 중 18개가 React 화면이며, `/my/chat-view`만 임시 화면이다.
+- React 사용자 경로 19개가 모두 React 화면에 연결됐고 `MigrationPlaceholder`는 제거됐다.
 - `/exchange/room`은 Vue에서도 기능이 없는 임시 화면이므로 React 라우트에서 제거된 상태다.
 
 ## 3. 영역별 대조 결과
@@ -67,6 +67,7 @@ Pinia diary/exchange
 | 마이 | `MyView.vue` | `MyView.jsx` | Zustand auth + Query 통계 | 프로필, 개인/공유 통계, 푸시, 로그아웃, 회원탈퇴 흐름 일치 |
 | 프로필 편집 | `ProfileView.vue` | `ProfileView.jsx` | Zustand auth | 조회, 입력 검증, 갱신, 완료 모달 일치 |
 | 데이터 백업 | `DataBack.vue` | `DataBack.jsx` | Query 개인 일기 + 화면 로컬 선택 상태 | 최신순 조회, 15개씩 더보기, 전체선택, CSV, 선택 삭제 흐름 일치 |
+| 저장된 일기 상세 | `ChatViewView.vue` | `ChatViewView.jsx` | Query 일기 상세·날짜 조회 | `id`·`date` 조회, 저장 결과 fallback, 게이지·지표·요약 표시 조건 일치 |
 
 ## 4. 이번 대조에서 발견해 수정한 차이
 
@@ -154,12 +155,14 @@ Vue의 Pinia 배열을 Query 캐시로 바꿨지만 Supabase 테이블, 필터, 
 
 ## 8. 다음 작업
 
-`DataBack.vue`의 전체 조회·선택·CSV 백업·삭제 이관을 완료했다. 다음 화면은 마지막 임시 경로인 `/my/chat-view`다.
+`ChatViewView.vue`의 저장된 일기 상세까지 이관해 사용자 화면 연결은 19/19 완료됐다. `MigrationPlaceholder.jsx`도 더 이상 실제 라우트에서 필요하지 않아 제거했다.
 
-1. `ChatViewView.vue`의 URL `id`·`date` 해석 순서를 유지한다.
-2. 기존 `useDiaryByIdQuery`, `useDiaryByDateQuery`를 재사용한다.
-3. 저장된 분석 결과의 JSON·일반 문자열 fallback을 동일하게 구현한다.
-4. 감정 게이지의 크기·색상·1.2초 애니메이션을 유지한다.
-5. 완료 후 `MigrationPlaceholder.jsx`를 제거할 수 있는지 전체 라우트를 검사한다.
+다음 점검은 실제 브라우저의 전체 회귀 검증이다.
+
+1. 메인 달력에서 `id`로 저장된 일기 상세에 진입한다.
+2. 점수가 있는 기록과 점수가 없는 예전 기록의 표시 조건을 각각 확인한다.
+3. 로그인부터 개인 일기 저장·재조회까지 한 흐름으로 확인한다.
+4. 공유일기 초대·댓글, 카메라·마이크·푸시처럼 외부 권한이 필요한 흐름을 확인한다.
+5. 결과가 안정적이면 Vue·Pinia 실행 코드와 전용 패키지를 제거한다.
 
 전체 파일별 변환 경로와 최종 Vue·Pinia 제거 순서는 [React 이관 현황 및 완료 계획](./react-migration-plan.md)에 계속 누적한다.

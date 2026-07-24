@@ -168,7 +168,7 @@ src/stores/exchange.js
 | `src/views/my/MyView.vue` | `src/views/my/MyView.jsx` | 기존 `src/assets/scss/_my.scss` 재사용 | 완료 |
 | `src/views/my/ProfileView.vue` | `src/views/my/ProfileView.jsx` | `src/views/my/ProfileView.scss` 및 기존 `ProfileForm.scss` 재사용 | 완료 |
 | `src/views/my/DataBack.vue` | `src/views/my/DataBack.jsx` | 기존 `_layout.scss`, `_button.scss` 재사용 및 `DataBack.scss` | 완료 |
-| `src/views/my/ChatViewView.vue` | `src/views/my/ChatViewView.jsx` 예정 | 기존 `_my.scss` 및 Gauge 스타일 검토 | 미완료 |
+| `src/views/my/ChatViewView.vue` | `src/views/my/ChatViewView.jsx` | `src/views/my/ChatViewView.scss` 및 `SvgGauge.scss` | 완료 |
 | `src/views/my/ChatListView.vue` | 대상 확인 후 제거 또는 React 작성 | 없음 | 기존 파일이 임시 화면이라 확인 필요 |
 
 ### 5.4 공통 컴포넌트
@@ -191,7 +191,7 @@ src/stores/exchange.js
 | `src/components/layout/modalFull.vue` | `src/components/layout/ModalFull.jsx` + `ModalFull.scss` | 완료 |
 | `src/components/layout/TabMenu.vue` | `src/components/layout/TabMenu.jsx` + `TabMenu.scss` | 완료 |
 | `src/views/my/ProfileForm.vue` | `src/views/my/ProfileForm.jsx` + `ProfileForm.scss` | 완료, `ProfileView.jsx`에서 사용 중 |
-| `vue-echarts`의 `VChart` 사용 부분 | `src/components/common/EChart.jsx` | Bar Chart 완료, Gauge 지원은 추후 추가 |
+| `vue-echarts`의 `VChart` 사용 부분 | `src/components/common/EChart.jsx`, `src/components/common/SvgGauge.jsx` | Bar Chart와 Gauge 완료 |
 | `src/components/layout/FooterDouble.vue` | React 파일 예정 | 실제 사용 화면 이관 시 처리 |
 | `src/components/layout/AppLayout.vue` | 대상 확인 후 제거 또는 React 작성 | 현재 실제 라우트에서 사용하지 않음 |
 | `src/components/HelloWorld.vue` | 대상 없음 | 예제 파일로 최종 삭제 예정 |
@@ -219,7 +219,7 @@ src/stores/exchange.js
 
 ## 6. 현재 React 이관 범위
 
-실제 사용자 라우트 기준 총 19개 동작 지점 중 18개가 React 구현에 연결됐다. 단순 라우트 개수 기준 약 95%이며, 남은 화면의 난이도까지 반영한 작업량 비율은 아니다.
+실제 사용자 라우트 기준 총 19개 동작 지점이 모두 React 구현에 연결됐다. 이는 화면 코드 연결이 19/19 완료됐다는 뜻이며, 실제 계정·권한·외부 서비스까지 포함한 통합 검증과 Vue·Pinia 제거는 아직 남아 있다.
 
 | 경로 | 기능 | 상태 |
 | --- | --- | --- |
@@ -239,7 +239,7 @@ src/stores/exchange.js
 | `/exchange/room` | 기능 없는 Vue 임시 화면 | React 라우트 제거, 최종 정리 때 Vue 파일 삭제 |
 | `/my` | 마이페이지·프로필·통계·푸시·계정 관리 | React 완료 |
 | `/my/databack` | 개인 일기 선택·CSV 백업·삭제 | React 완료 |
-| `/my/chat-view` | 저장된 일기 상세 | 임시 화면 |
+| `/my/chat-view` | 저장된 일기 상세·감정 게이지 | React 완료 |
 
 `/my/profile`은 기존과 동일하게 `/my`로 이동하는 redirect다.
 
@@ -324,14 +324,11 @@ src/views/my/ChatViewView.vue
 - 푸시 알림 구독·해제
 - 로그아웃과 회원 탈퇴 Edge Function
 - [x] 내 기록 목록·선택·CSV 백업·삭제
-- 저장된 일기 상세와 감정 게이지
+- [x] 저장된 일기 상세와 감정 게이지
 
-### 남은 공통 컴포넌트
+### 최종 정리에서 확인할 공통 컴포넌트
 
-실제 사용하는 화면을 옮길 때 함께 React로 변환한다.
-
-- `FooterDouble.vue`
-- 일기 상세용 ECharts Gauge 지원
+모든 사용자 화면 연결은 끝났다. `FooterDouble.vue`처럼 React 실행 경로에서 사용하지 않는 Vue 컴포넌트는 새로 이관하지 않고 최종 정리 단계에서 사용 여부를 다시 확인한 뒤 제거한다. 저장된 일기 상세의 Gauge는 기존 240×168 크기와 1.2초 애니메이션을 유지하는 `SvgGauge.jsx`를 재사용했다.
 
 `RoomView.vue`는 미사용 임시 화면으로 확정했다. `HelloWorld.vue`, `counter.js`, `ChatListView.vue`처럼 예제이거나 내용이 거의 없는 나머지 파일도 마지막에 사용 여부와 요구사항을 확인하고 정리한다.
 
@@ -374,7 +371,7 @@ src/views/my/ChatViewView.vue
 2. [x] 일기·교환일기 통계
 3. [x] 푸시 구독 코드 이관, 지원·거부 환경 수동 검증은 최종 단계에서 수행
 4. [x] 내 기록 목록·선택·CSV 백업·삭제
-5. 저장된 일기 상세
+5. [x] 저장된 일기 상세
 6. [x] 로그아웃·회원 탈퇴 코드 이관, 실제 계정 탈퇴는 최종 통합 검증에서 수행
 
 완료 조건은 프로필 변경, 일기 상세, 푸시 지원·미지원 브라우저, 탈퇴 후 세션 정리가 정상인 것이다.
@@ -383,7 +380,7 @@ src/views/my/ChatViewView.vue
 
 모든 React 라우트의 비교 검증이 끝난 뒤에만 수행한다.
 
-1. `MigrationPlaceholder.jsx` 제거
+1. [x] `MigrationPlaceholder.jsx` 제거
 2. 사용하지 않는 `.vue` 파일과 Vue 진입점·라우터 제거
 3. 기존 Pinia 저장소 제거
 4. Vue 전용 Vite·ESLint 설정 제거
@@ -454,7 +451,7 @@ eslint-plugin-vue
 
 ## 11. 최종 완료 체크리스트
 
-- [ ] 모든 사용자 라우트에서 `MigrationPlaceholder` 제거
+- [x] 모든 사용자 라우트에서 `MigrationPlaceholder` 제거
 - [ ] 기존 Vue와 동일한 핵심 기능 및 화면 유지
 - [ ] Supabase 서버 상태를 API 모듈 + TanStack Query로 관리
 - [ ] 필요한 전역 클라이언트 상태를 Zustand로 관리
@@ -470,10 +467,12 @@ eslint-plugin-vue
 
 ## 12. 바로 다음 작업
 
-다음 작업은 `src/views/my/ChatViewView.vue`를 기준으로 `/my/chat-view`의 저장된 개인 일기 상세 화면을 React로 이관하는 것이다.
+화면 코드 연결은 19/19 완료됐다. 다음 작업은 Vue·Pinia 파일을 바로 삭제하는 것이 아니라, React 전체 흐름을 실제 브라우저에서 먼저 회귀 검증하는 것이다.
 
-- URL의 `id` 또는 `date`로 개인 일기를 조회하는 순서를 유지한다.
-- 저장된 `result` JSON과 일반 문자열 fallback을 Vue와 동일하게 해석한다.
-- 감정 점수, 게이지, 지표, 채팅 요약 표시 조건을 유지한다.
-- 기존 결과 화면의 `SvgGauge.jsx`와 SCSS를 재사용하되 Vue의 크기·색상·애니메이션 값을 바꾸지 않는다.
-- 이 화면이 완료되면 모든 사용자 라우트에서 `MigrationPlaceholder`를 제거한다.
+1. 메인 달력에서 저장된 일기를 열어 `id` 조회, 게이지, 지표와 채팅 요약을 확인한다.
+2. 로그인→감정 선택→AI 채팅→저장→달력 재조회 흐름을 확인한다.
+3. 공유일기 작성→상세→초대→댓글 흐름을 다른 테스트 계정까지 포함해 확인한다.
+4. 카메라·마이크·푸시의 허용 및 거부 흐름을 확인한다.
+5. 검증 결과를 반영한 뒤 Vue 진입점·라우터·Pinia 저장소와 Vue 전용 패키지를 제거한다.
+
+`MigrationPlaceholder.jsx`와 전용 스타일은 마지막 실제 사용자 경로를 React로 연결하면서 제거했다. Vue 원본 화면은 회귀 비교 자료이므로 위 검증이 끝날 때까지 유지한다.

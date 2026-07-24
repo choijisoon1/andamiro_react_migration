@@ -4,7 +4,6 @@ import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router
 
 import App from '@/App'
 import { useAuthStore } from '@/stores/authStore'
-import MigrationPlaceholder from '@/views/MigrationPlaceholder'
 import AdviceView from '@/views/advice/AdviceView'
 import ChatView from '@/views/chat/ChatView'
 import EmotionView from '@/views/chat/EmotionView'
@@ -19,6 +18,7 @@ import JoinStep3View from '@/views/login/JoinStep3View'
 import JoinStep4View from '@/views/login/JoinStep4View'
 import LoginView from '@/views/login/LoginView'
 import MainView from '@/views/main/MainView'
+import ChatViewView from '@/views/my/ChatViewView'
 import DataBack from '@/views/my/DataBack'
 import MyView from '@/views/my/MyView'
 import ReportView from '@/views/report/ReportView'
@@ -82,10 +82,6 @@ function JoinRoute() {
   return <Outlet />
 }
 
-const protectedRoutes = [
-  ['/my/chat-view', '/my/chat-view'],
-]
-
 const router = createBrowserRouter([
   {
     element: <App />,
@@ -115,10 +111,7 @@ const router = createBrowserRouter([
           { path: 'exchange/view/:id', element: <DetailView /> },
           { path: 'my', element: <MyView /> },
           { path: 'my/databack', element: <DataBack /> },
-          ...protectedRoutes.map(([path, labelPath]) => ({
-            path: path.slice(1),
-            element: <MigrationPlaceholder path={labelPath} />,
-          })),
+          { path: 'my/chat-view', element: <ChatViewView /> },
         ],
       },
       {
