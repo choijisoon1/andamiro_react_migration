@@ -37,23 +37,20 @@ export const useAuthStore = create((set, get) => {
       return null
     }
 
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+    set({ profileLoaded: false })
 
-      if (error) {
-        set({ profile: null })
-        return null
-      }
+    // 프로필 행이 없는 신규 사용자와 네트워크·권한 오류를 구분해야
+    // 조회 실패를 신규 가입 대상으로 잘못 판단하지 않는다.
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle()
 
-      set({ profile: data })
-      return data
-    } finally {
-      set({ profileLoaded: true })
-    }
+    if (error) throw error
+
+    set({ profile: data ?? null, profileLoaded: true })
+    return data ?? null
   }
 
   function ensureAuthListener() {
@@ -92,7 +89,7 @@ export const useAuthStore = create((set, get) => {
         await withTimeout(fetchProfile(), PROFILE_TIMEOUT_MS, 'auth_listener_fetch_profile')
       } catch (error) {
         console.error('[auth:onAuthStateChange:fetchProfile]', error)
-        if (!get().profile) set({ profileLoaded: true })
+        set({ profileLoaded: false })
       } finally {
         set({ loading: false })
       }
@@ -204,10 +201,17 @@ export const useAuthStore = create((set, get) => {
       const { data } = await supabase.auth.getSession()
       const user = data.session?.user ?? null
       set({ user })
-      if (user) await fetchProfile()
-      else set({ profileLoaded: true })
+      if (user) {
+        await fetchProfile().catch((error) => {
+          // 세션은 유효하므로 프로필 조회 오류만 기록하고 로그인 사용자는 유지한다.
+          console.error('[auth:exchangeOAuthCode:fetchProfile]', error)
+          set({ profileLoaded: false })
+        })
+      } else {
+        set({ profile: null, profileLoaded: true })
+      }
     } catch {
-      set({ user: null, profileLoaded: true })
+      set({ user: null, profile: null, profileLoaded: true })
     }
   }
 

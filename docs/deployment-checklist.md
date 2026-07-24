@@ -80,6 +80,8 @@ Do not put the Vercel app URL here unless Google/Supabase documentation for the 
 
 - [ ] Open `/` and confirm splash redirects correctly.
 - [ ] Log in with Google as an existing user.
+- [ ] Force the existing user's profile request to fail and confirm it does not redirect to `/join/1`.
+- [ ] Restore the network and confirm the existing user's profile can be loaded again.
 - [ ] Log out and confirm `/login` appears.
 - [ ] Log in with a new Google account and confirm `/join/1` starts.
 - [ ] Complete `/join/1` through `/join/4`.
