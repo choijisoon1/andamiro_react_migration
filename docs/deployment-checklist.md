@@ -25,12 +25,29 @@ Do not put `SUPABASE_SERVICE_ROLE_KEY` in frontend or Vercel public environment 
 - [ ] `supabase/migrations/202607240001_protect_exchange_password.sql` 적용
 - [ ] `create-exchange-room` 배포
 - [ ] `list-exchange-posts` 배포
+- [ ] `get-exchange-invitation-preview` 배포
 - [ ] `accept-exchange-invitation` 배포
 - [ ] 일반 로그인 사용자가 `exchange_posts.password`를 직접 조회할 수 없는지 확인
+- [ ] 비로그인 사용자의 초대 미리보기 함수 직접 호출이 401로 거부되는지 확인
+- [ ] 초대 미리보기 응답에 `content`, `image_url`, `user_id`가 포함되지 않는지 확인
 - [ ] 방 소유자가 초대 정보를 보고 상대방이 비밀번호로 입장할 수 있는지 확인
 
 비밀번호 컬럼 보호 migration을 적용하지 않은 채 프런트엔드만 배포하면 직접
 Supabase REST 요청을 통한 컬럼 조회 위험이 남을 수 있습니다.
+
+### Optional Edge Function Secrets
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `ROOM_CREATED_WORKFLOW_URL` | No | 방 생성 이벤트를 외부 자동화로 보낼 때만 승인된 HTTPS 주소를 설정합니다. |
+
+외부 자동화를 사용하지 않으면 `ROOM_CREATED_WORKFLOW_URL`을 설정하지 않습니다.
+현재 코드는 값이 없을 때 외부 HTTP 요청과 `exchange_room_events` 생성을
+건너뛰고 공유일기 방과 초대 링크만 생성합니다.
+
+- [ ] 환경변수가 없는 상태에서 공유일기 방 생성이 정상 완료되는지 확인
+- [ ] 환경변수가 없는 상태에서 외부 워크플로 요청이 발생하지 않는지 확인
+- [ ] 자동화를 사용할 때만 승인된 HTTPS 주소를 Supabase Function secret으로 설정
 
 ## Supabase Auth Redirect URLs
 
@@ -123,6 +140,7 @@ Known deferred warning:
 - Do not commit real `.env` values or secrets.
 - Do not prefix `ANTHROPIC_API_KEY` with `VITE_`.
 - Do not put `SUPABASE_SERVICE_ROLE_KEY` in frontend or Vercel public env.
+- Do not add a hardcoded fallback URL for `ROOM_CREATED_WORKFLOW_URL`.
 - Do not set `VITE_N8N_WEBHOOK_URL` until n8n is intentionally enabled.
 - Do not remove Supabase token verification from `api/chat.js`.
 - Do not change OAuth redirect URLs immediately before deploy without retesting login.

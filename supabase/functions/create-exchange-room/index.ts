@@ -4,9 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const ROOM_CREATED_WORKFLOW_URL =
-  Deno.env.get('ROOM_CREATED_WORKFLOW_URL') ??
-  'https://fidelity-daredevil-factsheet.ngrok-free.dev/workflow/jQ6ExWN9z6zA4esN'
+// 외부 자동화는 Supabase 환경변수에 주소를 명시한 경우에만 실행한다.
+const ROOM_CREATED_WORKFLOW_URL = Deno.env.get('ROOM_CREATED_WORKFLOW_URL')?.trim() || null
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -135,21 +134,26 @@ serve(async (req) => {
 
   if (!invitation) return json({ error: 'Invitation creation failed' }, 500)
 
-  const { data: event, error: eventError } = await admin
-    .from('exchange_room_events')
-    .upsert(
-      { room_id: room.id, event_type: 'room_created' },
-      { onConflict: 'room_id,event_type', ignoreDuplicates: true }
-    )
-    .select()
-    .maybeSingle()
+  let event: { id: string } | null = null
+  if (ROOM_CREATED_WORKFLOW_URL) {
+    const { data, error: eventError } = await admin
+      .from('exchange_room_events')
+      .upsert(
+        { room_id: room.id, event_type: 'room_created' },
+        { onConflict: 'room_id,event_type', ignoreDuplicates: true }
+      )
+      .select('id')
+      .maybeSingle()
 
-  if (eventError) return json({ error: eventError.message }, 500)
+    if (eventError) return json({ error: eventError.message }, 500)
+    event = data
+  }
 
-  if (event) {
+  if (event && ROOM_CREATED_WORKFLOW_URL) {
+    const workflowUrl = ROOM_CREATED_WORKFLOW_URL
     EdgeRuntime.waitUntil((async () => {
       try {
-        const workflowRes = await fetch(ROOM_CREATED_WORKFLOW_URL, {
+        const workflowRes = await fetch(workflowUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
