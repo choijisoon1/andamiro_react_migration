@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+import LoadingSkeleton from '@/components/common/LoadingSkeleton'
 import NoData from '@/components/common/NoData'
+import QueryError from '@/components/common/QueryError'
 import AppTabBar from '@/components/layout/AppTabBar'
 import ModalFull from '@/components/layout/ModalFull'
 import PageLayout from '@/components/layout/PageLayout'
@@ -47,7 +49,8 @@ function adviceTipTitle(title) {
 function AdviceView() {
   const [today] = useState(() => new Date())
   const todayString = formatLocalDate(today)
-  const { data: diaryRecord = null } = useDiaryByDateQuery(todayString)
+  const diaryQuery = useDiaryByDateQuery(todayString)
+  const diaryRecord = diaryQuery.data ?? null
   const updateDiaryResult = useUpdateDiaryResultMutation()
   const { enrich } = useAdviceEnricher()
   const [enrichedRecord, setEnrichedRecord] = useState(null)
@@ -147,7 +150,14 @@ function AdviceView() {
         mainClassName="advice-page"
         footer={<AppTabBar />}
       >
-        {record ? (
+        {diaryQuery.isPending ? (
+          <LoadingSkeleton type="result" count={1} />
+        ) : diaryQuery.isError && diaryQuery.data === undefined ? (
+          <QueryError
+            title="오늘의 조언을 불러오지 못했어요"
+            onRetry={() => diaryQuery.refetch()}
+          />
+        ) : record ? (
           <>
             <section className="importance-content">
               <div className="button-content" aria-label="포춘쿠키">

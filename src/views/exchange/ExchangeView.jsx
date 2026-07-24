@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import LoadingSkeleton from '@/components/common/LoadingSkeleton'
 import NoData from '@/components/common/NoData'
+import QueryError from '@/components/common/QueryError'
 import PageLayout from '@/components/layout/PageLayout'
 import TabMenu from '@/components/layout/TabMenu'
 import {
@@ -17,6 +18,7 @@ const TABS = [
   { key: 'mine', label: '내가 공유한' },
   { key: 'shared', label: '공유 받은' },
 ]
+const EMPTY_POSTS = []
 
 function formatPostDate(dateValue) {
   if (!dateValue) return ''
@@ -51,10 +53,10 @@ function ExchangeView() {
   const [joinError, setJoinError] = useState('')
   const routeInviteToken = searchParams.get('invite') ?? ''
 
-  const {
-    data: posts = [],
-    isPending: postsLoading,
-  } = useExchangePostsQuery('all')
+  const postsQuery = useExchangePostsQuery('all')
+  const posts = postsQuery.data ?? EMPTY_POSTS
+  const postsLoading = postsQuery.isPending
+  const postsQueryFailed = postsQuery.isError && postsQuery.data === undefined
   const invitationPreview = useExchangeInvitationPreviewQuery(routeInviteToken)
   const acceptInvitation = useAcceptExchangeInvitationMutation()
   const deletePost = useDeleteExchangePostMutation()
@@ -128,6 +130,11 @@ function ExchangeView() {
       <section className="list-content">
         {isLoading ? (
           <LoadingSkeleton type="exchange-list" count={3} />
+        ) : postsQueryFailed ? (
+          <QueryError
+            title="공유일기를 불러오지 못했어요"
+            onRetry={() => postsQuery.refetch()}
+          />
         ) : filteredPosts.length === 0 ? (
           <NoData
             title="아직 공유한 일기가 없어요"

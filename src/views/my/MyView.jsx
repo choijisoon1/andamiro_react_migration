@@ -25,8 +25,15 @@ function MyView() {
   const profile = useAuthStore((state) => state.profile)
   const signOut = useAuthStore((state) => state.signOut)
   const deleteAccount = useAuthStore((state) => state.deleteAccount)
-  const { data: diaryStats = { total: 0, monthly: 0 } } = useDiaryStatsQuery()
-  const { data: exchangeCount = 0 } = useMyExchangeCountQuery()
+  const diaryStatsQuery = useDiaryStatsQuery()
+  const exchangeCountQuery = useMyExchangeCountQuery()
+  const diaryStats = diaryStatsQuery.data ?? { total: 0, monthly: 0 }
+  const exchangeCount = exchangeCountQuery.data ?? 0
+  const diaryStatsFailed = diaryStatsQuery.isError && diaryStatsQuery.data === undefined
+  const exchangeCountFailed = (
+    exchangeCountQuery.isError && exchangeCountQuery.data === undefined
+  )
+  const activitySummaryFailed = diaryStatsFailed || exchangeCountFailed
   const { subscribe, unsubscribe } = usePushSubscription()
   const [pushEnabled, setPushEnabled] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState(false)
@@ -38,6 +45,12 @@ function MyView() {
   const email = user?.email ?? ''
   const initial = nickname.charAt(0).toUpperCase()
   const avatarUrl = user?.user_metadata?.avatar_url ?? null
+
+  function refetchActivitySummary() {
+    // 조회 실패 값을 실제 0건으로 오해하지 않도록 각 통계를 다시 요청한다.
+    if (diaryStatsFailed) diaryStatsQuery.refetch()
+    if (exchangeCountFailed) exchangeCountQuery.refetch()
+  }
 
   function openModal(options = {}) {
     setModal(options)
@@ -268,18 +281,29 @@ function MyView() {
                 <div className="card-item my-stats">
                   <ul>
                     <li>
-                      <em>{diaryStats.total}</em>
+                      <em>{diaryStatsFailed ? '—' : diaryStats.total}</em>
                       <span>작성한 일기</span>
                     </li>
                     <li>
-                      <em>{exchangeCount}</em>
+                      <em>{exchangeCountFailed ? '—' : exchangeCount}</em>
                       <span>공유일기</span>
                     </li>
                     <li className="my-stats__item">
-                      <em>{diaryStats.monthly}</em>
+                      <em>{diaryStatsFailed ? '—' : diaryStats.monthly}</em>
                       <span>이번 달</span>
                     </li>
                   </ul>
+                  {activitySummaryFailed && (
+                    <div className="btn-content">
+                      <button
+                        type="button"
+                        className="btn-sub"
+                        onClick={refetchActivitySummary}
+                      >
+                        활동요약 다시 불러오기
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 

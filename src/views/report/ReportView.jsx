@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 
 import EChart from '@/components/common/EChart'
+import LoadingSkeleton from '@/components/common/LoadingSkeleton'
 import NoData from '@/components/common/NoData'
+import QueryError from '@/components/common/QueryError'
 import AppTabBar from '@/components/layout/AppTabBar'
 import PageLayout from '@/components/layout/PageLayout'
 import { useDiariesByMonthQuery } from '@/queries/diaryQueries'
@@ -16,6 +18,7 @@ const EMOTION_KO = {
   worst: '최악이에요',
 }
 const VALID_EMOTIONS = new Set(['best', 'good', 'normal', 'bad', 'worst'])
+const EMPTY_DIARIES = []
 const BAR_COLORS = [
   '#79AAFF',
   '#A2C4FF',
@@ -122,7 +125,8 @@ function ReportView() {
   const [now] = useState(() => new Date())
   const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
   const monthLabel = `${now.getMonth() + 1}월`
-  const { data: diaries = [] } = useDiariesByMonthQuery(yearMonth)
+  const diariesQuery = useDiariesByMonthQuery(yearMonth)
+  const diaries = diariesQuery.data ?? EMPTY_DIARIES
 
   // Supabase 원본을 별도 전역 상태에 복사하지 않고 화면용 파생값만 계산한다.
   const weekdayEnergy = useMemo(() => getWeekdayEnergy(diaries), [diaries])
@@ -168,7 +172,14 @@ function ReportView() {
       mainClassName="report-main"
       footer={<AppTabBar />}
     >
-      {diaries.length > 0 ? (
+      {diariesQuery.isPending ? (
+        <LoadingSkeleton type="result" count={1} />
+      ) : diariesQuery.isError && diariesQuery.data === undefined ? (
+        <QueryError
+          title="리포트를 불러오지 못했어요"
+          onRetry={() => diariesQuery.refetch()}
+        />
+      ) : diaries.length > 0 ? (
         <>
           <section className="report-hero">
             <div className="text-content">

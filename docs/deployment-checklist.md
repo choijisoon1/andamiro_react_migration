@@ -96,12 +96,17 @@ Do not put the Vercel app URL here unless Google/Supabase documentation for the 
 - [ ] Open `/advice` and confirm today's advice screen works.
 - [ ] Confirm `/advice` reads the same local-date record that was saved from `/chat/result`.
 - [ ] Open `/report` and confirm report data renders.
+- [ ] Fail the diary queries on `/main`, `/advice`, and `/report`; confirm an error message appears instead of the empty-data message.
+- [ ] Restore the network, click `다시 시도하기`, and confirm the diary data returns.
 - [ ] Create an exchange diary in `/exchange/write`.
 - [ ] Open the exchange diary detail page.
+- [ ] Fail the exchange list/detail queries and confirm their error and retry states.
 - [ ] Copy or share an invitation link.
 - [ ] Open the invitation link in a logged-out browser and confirm login flow.
 - [ ] Enter the exchange diary password and confirm room entry.
 - [ ] Open `/my` and confirm profile, stats, and logout.
+- [ ] Fail the activity-summary query and confirm unavailable values show `—`, not `0`.
+- [ ] Fail `/my/databack` and saved-diary detail queries; confirm they remain on the current screen and can retry.
 
 ## `/api/chat` Failure Logs
 

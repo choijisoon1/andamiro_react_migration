@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 import LoadingSkeleton from '@/components/common/LoadingSkeleton'
 import NoData from '@/components/common/NoData'
+import QueryError from '@/components/common/QueryError'
 import FooterCtp from '@/components/layout/FooterCtp'
 import PageLayout from '@/components/layout/PageLayout'
 import {
@@ -86,7 +87,9 @@ function createCsv(diaries) {
 function DataBack() {
   const navigate = useNavigate()
   const authLoading = useAuthStore((state) => state.loading)
-  const { data: diaries = EMPTY_DIARIES, isPending } = useDiaryBackupQuery()
+  const diariesQuery = useDiaryBackupQuery()
+  const diaries = diariesQuery.data ?? EMPTY_DIARIES
+  const backupQueryFailed = diariesQuery.isError && diariesQuery.data === undefined
   const deleteDiaries = useDeleteDiariesMutation()
   const [downloading, setDownloading] = useState(false)
   const [viewState, setViewState] = useState({
@@ -117,7 +120,7 @@ function DataBack() {
     && diaries.every((diary) => selectedIds.has(diary.id))
   const actionLabel = isAllSelected ? '해제' : '전체선택'
   const deleting = deleteDiaries.isPending
-  const isLoading = authLoading || isPending
+  const isLoading = authLoading || diariesQuery.isPending
 
   function toggleSelect(id) {
     setViewState((current) => {
@@ -203,6 +206,11 @@ function DataBack() {
       <section className="list-content">
         {isLoading ? (
           <LoadingSkeleton type="exchange-list" count={3} />
+        ) : backupQueryFailed ? (
+          <QueryError
+            title="백업 데이터를 불러오지 못했어요"
+            onRetry={() => diariesQuery.refetch()}
+          />
         ) : diaries.length === 0 ? (
           <NoData
             title="백업할 데이터가 없어요"

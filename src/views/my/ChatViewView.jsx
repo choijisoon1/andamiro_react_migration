@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
+import QueryError from '@/components/common/QueryError'
 import SvgGauge from '@/components/common/SvgGauge'
 import FooterCtp from '@/components/layout/FooterCtp'
 import PageLayout from '@/components/layout/PageLayout'
@@ -79,6 +80,7 @@ function ChatViewView() {
   const dateQuery = useDiaryByDateQuery(queryValue && !isUuid ? queryValue : '')
   const activeQuery = isUuid ? idQuery : dateQuery
   const record = activeQuery.data ?? null
+  const recordQueryFailed = activeQuery.isError && activeQuery.data === undefined
   const analysis = useMemo(() => createAnalysis(record), [record])
   const [gaugeScore, setGaugeScore] = useState(0)
   const [mainScore, setMainScore] = useState(0)
@@ -93,10 +95,17 @@ function ChatViewView() {
       return
     }
 
-    if (!activeQuery.isLoading && !activeQuery.isFetching && !record) {
+    // 조회 오류는 기록 없음과 다르므로 홈으로 보내지 않고 현재 화면에서 재시도하게 한다.
+    if (
+      !activeQuery.isLoading
+      && !activeQuery.isFetching
+      && !activeQuery.isError
+      && !record
+    ) {
       navigate('/main', { replace: true })
     }
   }, [
+    activeQuery.isError,
     activeQuery.isFetching,
     activeQuery.isLoading,
     navigate,
@@ -155,7 +164,14 @@ function ChatViewView() {
         </div>
       )}
 
-      {!activeQuery.isLoading && analysis && (
+      {!activeQuery.isLoading && recordQueryFailed && (
+        <QueryError
+          title="저장된 일기를 불러오지 못했어요"
+          onRetry={() => activeQuery.refetch()}
+        />
+      )}
+
+      {!activeQuery.isLoading && !recordQueryFailed && analysis && (
         <>
           <section className="importance-content">
             <div className="text-content">

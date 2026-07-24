@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import LoadingSkeleton from '@/components/common/LoadingSkeleton'
+import QueryError from '@/components/common/QueryError'
 import ModalBottom from '@/components/layout/ModalBottom'
 import PageLayout from '@/components/layout/PageLayout'
 import {
@@ -111,6 +112,22 @@ function DetailView() {
     || commentsQuery.isLoading
     || (isOwner && invitationQuery.isLoading)
   )
+  const detailQueryFailed = (
+    (postQuery.isError && postQuery.data === undefined)
+    || (commentsQuery.isError && commentsQuery.data === undefined)
+    || (
+      isOwner
+      && invitationQuery.isError
+      && invitationQuery.data === undefined
+    )
+  )
+
+  function refetchDetail() {
+    // 상세 본문·댓글·소유자 초대 정보를 함께 다시 요청해 부분 실패 상태를 남기지 않는다.
+    postQuery.refetch()
+    commentsQuery.refetch()
+    if (isOwner) invitationQuery.refetch()
+  }
 
   useEffect(() => (
     () => {
@@ -336,6 +353,11 @@ function DetailView() {
       >
         {loading ? (
           <LoadingSkeleton type="result" count={1} />
+        ) : detailQueryFailed ? (
+          <QueryError
+            title="공유일기 상세를 불러오지 못했어요"
+            onRetry={refetchDetail}
+          />
         ) : post ? (
           <>
             <section className="view-content">

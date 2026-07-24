@@ -11,14 +11,25 @@ function NoData({
   iconWrapperClass = '',
   iconBaseClass = 'no-data__icon',
   iconClass = '',
+  ariaLabel = '데이터 없음 안내',
+  onButtonClick,
 }) {
   const navigate = useNavigate()
   const descriptionLines = description.split(/<br\s*\/?>/i)
 
+  function handleButtonClick() {
+    // 조회 오류 화면은 같은 디자인을 유지하면서 이동 대신 현재 Query를 다시 요청한다.
+    if (onButtonClick) {
+      onButtonClick()
+      return
+    }
+    navigate(buttonTo)
+  }
+
   return (
     <section
       className={`no-data${wrapperClass ? ` ${wrapperClass}` : ''}`}
-      aria-label="데이터 없음 안내"
+      aria-label={ariaLabel}
     >
       <div>
         <div className="text-content">
@@ -42,7 +53,7 @@ function NoData({
               <button
                 type="button"
                 className="btn-sub"
-                onClick={() => navigate(buttonTo)}
+                onClick={handleButtonClick}
               >
                 {buttonLabel}
               </button>

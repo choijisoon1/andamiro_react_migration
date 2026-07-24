@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import QueryError from '@/components/common/QueryError'
 import AppTabBar from '@/components/layout/AppTabBar'
 import ModalBottom from '@/components/layout/ModalBottom'
 import PageLayout from '@/components/layout/PageLayout'
@@ -17,6 +18,7 @@ const EMOTION_KO = {
   bad: '별로예요',
   worst: '최악이에요',
 }
+const EMPTY_DIARIES = []
 
 function dateString(year, month, day) {
   return [
@@ -62,10 +64,10 @@ function MainView() {
   const nickname = profile?.nickname ?? userEmail?.split('@')[0] ?? '사용자'
   const todayString = formatLocalDate(today)
 
-  const {
-    data: diaries = [],
-    isFetching: calendarLoading,
-  } = useDiariesByMonthQuery(yearMonth)
+  const diariesQuery = useDiariesByMonthQuery(yearMonth)
+  const diaries = diariesQuery.data ?? EMPTY_DIARIES
+  const calendarLoading = diariesQuery.isFetching
+  const calendarQueryFailed = diariesQuery.isError && diariesQuery.data === undefined
 
   const calendarDays = useMemo(() => {
     const firstDay = new Date(year, month, 1).getDay()
@@ -169,7 +171,13 @@ function MainView() {
         </section>
 
         <section className="importance-content round calendar">
-          <div id="mainCalendarHost" className="calendar-grid__item" aria-label="월별 캘린더">
+          {calendarQueryFailed ? (
+            <QueryError
+              title="달력 기록을 불러오지 못했어요"
+              onRetry={() => diariesQuery.refetch()}
+            />
+          ) : (
+            <div id="mainCalendarHost" className="calendar-grid__item" aria-label="월별 캘린더">
             <div className="dayflow-cal" role="application" aria-label="월별 달력">
               <div className="dayflow-cal__head">
                 <button
@@ -305,7 +313,8 @@ function MainView() {
                 </div>
               </>
             )}
-          </div>
+            </div>
+          )}
         </section>
       </PageLayout>
 
