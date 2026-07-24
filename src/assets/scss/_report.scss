@@ -38,6 +38,8 @@
   > .no-data {
     position: static;
     width: 100%;
+    // 리포트는 absolute 배치를 해제하므로 공통 inset 대신 자동 여백으로 520px 영역을 중앙 정렬한다.
+    margin-inline: auto;
     min-height: 60vh;
     display: flex;
     flex-direction: column;
@@ -229,4 +231,3 @@
 
     }
 }
-
